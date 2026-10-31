@@ -104,7 +104,7 @@ define( 'GAIML_OPENAI_API_KEY', 'sk-...' );
 ```bash
 wp gaiml translate 12 34 --lang=en,es   # traduit des contenus et attend le résultat
 wp gaiml translate 7 --type=term         # traduit une catégorie
-wp gaiml bulk --lang=en                  # tout ce qui manque, pages d'abord
+wp gaiml bulk --lang=en                  # tout ce qui manque, pages d’abord (--queue-only : laisser WP-Cron traiter)
 wp gaiml queue status|run|retry|clear
 wp gaiml status                          # langues, contenus, consommation du mois
 ```

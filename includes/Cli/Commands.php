@@ -69,7 +69,7 @@ final class Commands {
 	 * [--post_type=<types>]
 	 * : Comma-separated post types. Default: every translatable post type.
 	 *
-	 * [--no-run]
+	 * [--queue-only]
 	 * : Only queue (WP-Cron processes the queue).
 	 *
 	 * @param string[]              $args
@@ -96,13 +96,15 @@ final class Commands {
 					'suppress_filters' => false,
 				)
 			);
+			Translations::prime( 'post', array_map( 'intval', $ids ) );
+			$jobs = array();
 			foreach ( $ids as $id ) {
 				if ( Engine::source_of( 'post', (int) $id ) !== (int) $id || ! Content::is_translatable_post( (int) $id ) ) {
 					continue;
 				}
-				$missing = array_diff( $langs, array_keys( Translations::members( 'post', (int) $id ) ) );
-				$queued += Queue::enqueue( 'post', (int) $id, $missing );
+				$jobs[ (int) $id ] = array_values( array_diff( $langs, array_keys( Translations::members( 'post', (int) $id ) ) ) );
 			}
+			$queued += Queue::enqueue_many( 'post', $jobs );
 		}
 		foreach ( $langs as $lang ) {
 			if ( $lang !== $default ) {
@@ -110,7 +112,7 @@ final class Commands {
 			}
 		}
 		\WP_CLI::log( sprintf( '%d translation(s) queued.', $queued ) );
-		if ( ! isset( $assoc['no-run'] ) ) {
+		if ( ! isset( $assoc['queue-only'] ) ) {
 			$this->drain();
 		}
 	}

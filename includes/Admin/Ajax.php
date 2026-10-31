@@ -213,8 +213,10 @@ final class Ajax {
 				array_merge( $types, array( $default ) )
 			)
 		);
+		$ids = array_map( 'intval', $ids );
+		Translations::prime( 'post', $ids );
 		$out = array();
-		foreach ( array_map( 'intval', $ids ) as $id ) {
+		foreach ( $ids as $id ) {
 			if ( ! Content::is_translatable_post( $id ) ) {
 				continue;
 			}
@@ -278,10 +280,18 @@ final class Ajax {
 
 	public static function bulk(): void {
 		self::check( 'manage_options' );
-		$params = self::bulk_params();
-		$count  = 0;
-		foreach ( self::candidates( $params['types'], $params['langs'], $params['outdated'] ) as $id => $langs ) {
-			$count += Queue::enqueue( 'post', $id, $langs );
+		$params     = self::bulk_params();
+		$candidates = self::candidates( $params['types'], $params['langs'], $params['outdated'] );
+		// New jobs in a few multi-row inserts; outdated translations need their job reset.
+		$count = Queue::enqueue_many( 'post', $candidates );
+		if ( $params['outdated'] ) {
+			foreach ( $candidates as $id => $langs ) {
+				foreach ( $langs as $lang ) {
+					if ( Translations::translation( 'post', $id, $lang ) ) {
+						$count += Queue::enqueue( 'post', $id, array( $lang ) );
+					}
+				}
+			}
 		}
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Checked in self::check().
 		if ( ! empty( $_POST['strings'] ) ) {

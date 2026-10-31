@@ -91,6 +91,33 @@ final class Queue {
 		return $count;
 	}
 
+	/**
+	 * Queues many jobs at once (bulk translation of large sites): one INSERT per
+	 * 500 jobs; jobs already in the queue are left as they are.
+	 *
+	 * @param array<int, string[]> $jobs Object ID => languages.
+	 */
+	public static function enqueue_many( string $type, array $jobs ): int {
+		global $wpdb;
+		$now   = current_time( 'mysql', true );
+		$rows  = array();
+		$count = 0;
+		foreach ( $jobs as $id => $langs ) {
+			foreach ( array_unique( (array) $langs ) as $lang ) {
+				if ( Languages::exists( $lang ) ) {
+					$rows[] = $wpdb->prepare( "(%s, %d, %s, 'pending', 0, 0, '', '', %s, %s)", $type, (int) $id, $lang, $now, $now );
+				}
+			}
+		}
+		foreach ( array_chunk( $rows, 500 ) as $chunk ) {
+			$count += (int) $wpdb->query( 'INSERT IGNORE INTO ' . self::table() . ' (object_type, object_id, lang, status, force_update, attempts, message, data, created, updated) VALUES ' . implode( ',', $chunk ) ); // phpcs:ignore WordPress.DB
+		}
+		if ( $count ) {
+			self::schedule();
+		}
+		return $count;
+	}
+
 	public static function schedule(): void {
 		if ( ! wp_next_scheduled( 'gaiml_cron' ) ) {
 			wp_schedule_event( time() + 5, 'gaiml_minute', 'gaiml_cron' );

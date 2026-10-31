@@ -207,12 +207,9 @@ final class Router {
 
 		if ( $hidden && $default === self::$current && '' !== self::$prefix ) {
 			$target = Links::strip_lang( Links::origin() . $uri )[0];
-		} elseif ( ! $hidden && '' === self::$prefix && '' === self::relative_path( (string) wp_parse_url( $uri, PHP_URL_PATH ) ) ) {
-			$target = Links::language_home( $default );
-			$query  = (string) wp_parse_url( $uri, PHP_URL_QUERY );
-			if ( '' !== $query ) {
-				$target .= '?' . $query;
-			}
+		} elseif ( ! $hidden && '' === self::$prefix ) {
+			// Every URL of the default language carries its prefix too: /contact/ → /fr/contact/.
+			$target = Links::add_lang( Links::origin() . '/' . ltrim( $uri, '/' ), $default );
 		}
 		if ( '' !== $target ) {
 			wp_safe_redirect( $target, 301, 'GustinAI Multilingual' );

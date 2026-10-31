@@ -43,9 +43,6 @@ final class LlmsTxt {
 		$lang     = null;
 		if ( 'llms.txt' === $relative ) {
 			$lang = Languages::default_code();
-			if ( '' !== Languages::url_slug( $lang ) ) {
-				$lang = null;
-			}
 		} elseif ( preg_match( '~^([^/]+)/llms\.txt$~', $relative, $m ) ) {
 			$code = Languages::by_slug( $m[1] );
 			$lang = ( null !== $code && '' !== Languages::url_slug( $code ) ) ? $code : null;
@@ -113,7 +110,7 @@ final class LlmsTxt {
 
 		$others = array();
 		foreach ( Languages::others( $lang ) as $other ) {
-			$slug     = Languages::url_slug( $other );
+			$slug     = Languages::is_default( $other ) ? '' : Languages::url_slug( $other );
 			$others[] = '- [' . Languages::name( $other ) . '](' . Links::raw_home() . '/' . ( '' !== $slug ? $slug . '/' : '' ) . 'llms.txt)';
 		}
 		if ( $others ) {
