@@ -241,7 +241,7 @@ final class Engine {
 		if ( $source_lang === $lang ) {
 			return new \WP_Error( 'gaiml_lang', __( 'The content is already in this language.', 'gustinai-multilingual' ) );
 		}
-		$target = Translations::translation( 'post', $id, $lang );
+		$target = self::target( $id, $lang );
 		if ( $target && ! $force && self::is_edited( $target ) ) {
 			return array(
 				'skip'   => __( 'Translation edited by hand: kept as is.', 'gustinai-multilingual' ),
@@ -334,15 +334,20 @@ final class Engine {
 		$source_id = (int) $post->ID;
 		$group     = Translations::group( 'post', $source_id );
 		$group     = $group > 0 ? $group : $source_id;
-		$target    = Translations::translation( 'post', $source_id, $lang );
+		$target    = self::target( $source_id, $lang );
+		$stale     = Translations::translation( 'post', $source_id, $lang );
 		$title     = (string) $plan['fields']['post_title']( $tr );
+		if ( $stale && $stale !== $target ) {
+			// Trashed or abandoned translation: it leaves the group, a new one replaces it.
+			Translations::unlink( 'post', $stale );
+		}
 
 		$data = array(
 			'post_title'   => $title,
 			'post_content' => (string) $plan['fields']['post_content']( $tr ),
 			'post_excerpt' => isset( $plan['fields']['post_excerpt'] ) ? (string) $plan['fields']['post_excerpt']( $tr ) : '',
 		);
-		$parent = $post->post_parent ? Translations::translation( 'post', (int) $post->post_parent, $lang ) : 0;
+		$parent = $post->post_parent ? self::target( (int) $post->post_parent, $lang ) : 0;
 		if ( $target ) {
 			$data['ID'] = $target;
 			if ( $parent ) {
@@ -352,7 +357,14 @@ final class Engine {
 				$data['post_name'] = $tr[ $plan['slug'] ];
 			}
 		} else {
-			$slug   = isset( $plan['slug'], $tr[ $plan['slug'] ] ) ? $tr[ $plan['slug'] ] : sanitize_title( wp_strip_all_tags( $title ) );
+			if ( isset( $plan['slug'], $tr[ $plan['slug'] ] ) ) {
+				$slug = $tr[ $plan['slug'] ];
+			} elseif ( ! Settings::get( 'translate_slugs' ) && '' !== $post->post_name ) {
+				// Slugs are not translated: same slug in every language (unique per language).
+				$slug = $post->post_name;
+			} else {
+				$slug = sanitize_title( wp_strip_all_tags( $title ) );
+			}
 			$status = ( 'draft' === Settings::get( 'new_status' ) && 'publish' === $post->post_status ) ? 'draft' : $post->post_status;
 			$data  += array(
 				'post_type'      => $post->post_type,
@@ -384,7 +396,17 @@ final class Engine {
 			if ( ! Translations::get( 'post', $source_id ) ) {
 				Translations::set( 'post', $source_id, $plan['source_lang'] );
 			}
-			Translations::set( 'post', $target_id, $lang, $group );
+			if ( ! Translations::set( 'post', $target_id, $lang, $group ) ) {
+				if ( ! $target ) {
+					// Another request created this translation at the same time: no duplicate.
+					wp_delete_post( $target_id, true );
+				}
+				return new \WP_Error( 'gaiml_conflict', __( 'Another translation into this language was created at the same time. Try again.', 'gustinai-multilingual' ) );
+			}
+			// Provisional hashes: if the request dies before the end, the translation
+			// is seen as outdated (redone later), not as edited by hand.
+			update_post_meta( $target_id, '_gaiml_source_hash', 'pending' );
+			update_post_meta( $target_id, '_gaiml_output_hash', self::output_hash( $target_id ) );
 			self::copy_terms( $target_id, $plan, $tr );
 			self::copy_meta( $source_id, $target_id, $plan, $tr );
 			foreach ( $plan['attachments'] as $attachment => $id ) {
@@ -581,8 +603,12 @@ final class Engine {
 		if ( '' === $name ) {
 			return 0;
 		}
-		$slug  = isset( $item['slug'], $tr[ $item['slug'] ] ) ? $tr[ $item['slug'] ] : sanitize_title( $name );
-		$slug  = Slugs::term_slug( $slug, $term->taxonomy, $lang );
+		if ( isset( $item['slug'], $tr[ $item['slug'] ] ) ) {
+			$slug = $tr[ $item['slug'] ];
+		} else {
+			$slug = Settings::get( 'translate_slugs' ) ? sanitize_title( $name ) : $term->slug;
+		}
+		$slug = Slugs::term_slug( $slug, $term->taxonomy, $lang );
 		$group = Translations::group( 'term', $term_id );
 		if ( ! $group ) {
 			Translations::set( 'term', $term_id, $plan['source_lang'] );
@@ -755,8 +781,25 @@ final class Engine {
 	 * A translation changed by hand since it was generated (or written by hand).
 	 */
 	public static function is_edited( int $target ): bool {
+		if ( 'pending' === get_post_meta( $target, '_gaiml_source_hash', true ) ) {
+			// Save interrupted: the content is still the engine's.
+			return false;
+		}
 		$stored = (string) get_post_meta( $target, '_gaiml_output_hash', true );
 		return '' === $stored || $stored !== self::output_hash( $target );
+	}
+
+	/**
+	 * Translation of a post, ignoring trashed and abandoned (auto-draft) posts:
+	 * those are replaced by a new translation.
+	 */
+	public static function target( int $source_id, string $lang ): int {
+		$target = Translations::translation( 'post', $source_id, $lang );
+		if ( ! $target || $target === $source_id ) {
+			return $target;
+		}
+		$status = get_post_status( $target );
+		return ( false === $status || 'trash' === $status || 'auto-draft' === $status ) ? 0 : $target;
 	}
 
 	/**
@@ -768,7 +811,7 @@ final class Engine {
 		if ( $job ) {
 			return 'failed' === $job->status ? 'failed' : 'queued';
 		}
-		$target = Translations::translation( 'post', $source_id, $lang );
+		$target = self::target( $source_id, $lang );
 		if ( ! $target ) {
 			return 'missing';
 		}

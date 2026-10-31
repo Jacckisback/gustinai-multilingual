@@ -1,6 +1,6 @@
 <?php
 /**
- * Test-only mu-plugin: a fake AI provider. Translations are "[EN] original",
+ * Test-only mu-plugin: a fake AI provider. Translations are "EN· original",
  * slugs "en-original", placeholders untouched. Copy to wp-content/mu-plugins/.
  *
  * @package GustinAI\Multilingual
@@ -27,7 +27,7 @@ add_filter(
 					$text  = $item['text'];
 					$out[] = array(
 						'id'   => $item['id'],
-						'text' => 'slug' === $item['kind'] ? $code . '-' . $text : '[' . strtoupper( $code ) . '] ' . $text,
+						'text' => 'slug' === $item['kind'] ? $code . '-' . $text : strtoupper( $code ) . '· ' . $text,
 					);
 				}
 				update_option( 'gaiml_mock_calls', (int) get_option( 'gaiml_mock_calls', 0 ) + 1, false );

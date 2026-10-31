@@ -102,7 +102,7 @@ final class Commands {
 				if ( Engine::source_of( 'post', (int) $id ) !== (int) $id || ! Content::is_translatable_post( (int) $id ) ) {
 					continue;
 				}
-				$jobs[ (int) $id ] = array_values( array_diff( $langs, array_keys( Translations::members( 'post', (int) $id ) ) ) );
+				$jobs[ (int) $id ] = array_values( array_filter( $langs, static fn( $lang ) => ! Engine::target( (int) $id, $lang ) ) );
 			}
 			$queued += Queue::enqueue_many( 'post', $jobs );
 		}

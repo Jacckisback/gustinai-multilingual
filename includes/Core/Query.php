@@ -53,6 +53,10 @@ final class Query {
 	 */
 	public static function lang_condition( string $alias, string $lang ): string {
 		global $wpdb;
+		if ( 'active' === $lang ) {
+			// Every active language: content of a removed language stays hidden.
+			return "( {$alias}.lang IN (" . self::sql_in( Languages::codes() ) . ") OR {$alias}.lang IS NULL )";
+		}
 		if ( Languages::is_default( $lang ) ) {
 			return $wpdb->prepare( "( {$alias}.lang = %s OR {$alias}.lang IS NULL )", $lang ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		}
@@ -67,7 +71,8 @@ final class Query {
 	}
 
 	/**
-	 * Language a query must be filtered by, null for no filtering.
+	 * Language a query must be filtered by ('active' for every active
+	 * language), null for no filtering.
 	 */
 	public static function query_lang( \WP_Query $query ): ?string {
 		if ( self::$suspended ) {
@@ -77,7 +82,7 @@ final class Query {
 		if ( 'all' === $explicit ) {
 			return null;
 		}
-		if ( is_string( $explicit ) && Languages::exists( $explicit ) ) {
+		if ( 'active' === $explicit || ( is_string( $explicit ) && Languages::exists( $explicit ) ) ) {
 			return $explicit;
 		}
 		$lang = Router::current();
@@ -177,7 +182,7 @@ final class Query {
 		if ( 'all' === $explicit ) {
 			return $clauses;
 		}
-		if ( is_string( $explicit ) && Languages::exists( $explicit ) ) {
+		if ( 'active' === $explicit || ( is_string( $explicit ) && Languages::exists( $explicit ) ) ) {
 			$lang = $explicit;
 		} else {
 			$lang = Router::current();
@@ -293,11 +298,11 @@ final class Query {
 	 */
 	public static function translate_page_option( $value ) {
 		$lang = Router::current();
-		if ( ! $value || null === $lang || Router::is_neutral() || self::$suspended ) {
+		if ( ! $value || null === $lang || ! Router::is_page_view() || self::$suspended ) {
 			return $value;
 		}
 		$translation = Translations::translation( 'post', (int) $value, $lang );
-		return $translation ? $translation : $value;
+		return ( $translation && 'publish' === get_post_status( $translation ) ) ? $translation : $value;
 	}
 
 	/**
@@ -308,7 +313,7 @@ final class Query {
 	 */
 	public static function sticky_posts( $ids ) {
 		$lang = Router::current();
-		if ( ! is_array( $ids ) || ! $ids || null === $lang || Router::is_neutral() || self::$suspended ) {
+		if ( ! is_array( $ids ) || ! $ids || null === $lang || ! Router::is_page_view() || self::$suspended ) {
 			return $ids;
 		}
 		Translations::prime( 'post', array_map( 'intval', $ids ) );

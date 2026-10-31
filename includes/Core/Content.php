@@ -30,6 +30,7 @@ final class Content {
 
 	public static function init(): void {
 		add_action( 'save_post', array( self::class, 'on_save_post' ), 5, 3 );
+		add_action( 'transition_post_status', array( self::class, 'link_manual' ), 5, 3 );
 		add_action( 'created_term', array( self::class, 'on_created_term' ), 5, 3 );
 		add_action( 'deleted_post', array( self::class, 'on_deleted_post' ) );
 		add_action( 'delete_term', array( self::class, 'on_deleted_term' ), 10, 3 );
@@ -142,18 +143,18 @@ final class Content {
 		if ( Translations::get( 'post', (int) $post_id ) ) {
 			return;
 		}
-		$lang  = Languages::default_code();
-		$group = 0;
+		$lang = Languages::default_code();
 		// "Add a translation manually" links: post-new.php?gaiml_lang=en&gaiml_from=123.
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only context for a new auto-draft, permissions checked below.
+		// The new post gets its language now and joins the original's group when it
+		// is first saved (see link_manual()): an abandoned auto-draft takes no slot.
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only context for a new auto-draft, permissions checked in can_link().
 		if ( 'auto-draft' === $post->post_status && isset( $_GET['gaiml_lang'] ) ) {
 			$requested = sanitize_key( wp_unslash( $_GET['gaiml_lang'] ) );
 			$from      = isset( $_GET['gaiml_from'] ) ? absint( $_GET['gaiml_from'] ) : 0;
 			if ( Languages::exists( $requested ) ) {
 				$lang = $requested;
-				if ( $from && current_user_can( 'edit_post', $from ) && get_post_type( $from ) === $post->post_type
-					&& ! Translations::translation( 'post', $from, $requested ) ) {
-					$group = Translations::group( 'post', $from ) ?: $from;
+				if ( $from && self::can_link( $from, $post, $requested ) ) {
+					update_post_meta( (int) $post_id, '_gaiml_link_to', $from );
 				}
 			}
 		} elseif ( is_admin() && isset( $_GET['gaiml_lang'] ) && Languages::exists( sanitize_key( wp_unslash( $_GET['gaiml_lang'] ) ) ) ) {
@@ -162,10 +163,51 @@ final class Content {
 			$lang = (string) Router::current();
 		}
 		// phpcs:enable
-		if ( $group && ! Translations::get( 'post', $group ) ) {
-			Translations::set( 'post', $group, Languages::default_code() );
+		Translations::set( 'post', (int) $post_id, $lang );
+	}
+
+	/**
+	 * A manual translation joins the group of its original on its first save.
+	 *
+	 * @param string   $new_status
+	 * @param string   $old_status
+	 * @param \WP_Post $post
+	 */
+	public static function link_manual( $new_status, $old_status, $post ): void {
+		if ( 'auto-draft' !== $old_status || in_array( $new_status, array( 'auto-draft', 'trash' ), true ) || ! $post instanceof \WP_Post ) {
+			return;
 		}
-		Translations::set( 'post', (int) $post_id, $lang, $group );
+		$from = (int) get_post_meta( $post->ID, '_gaiml_link_to', true );
+		if ( ! $from ) {
+			return;
+		}
+		delete_post_meta( $post->ID, '_gaiml_link_to' );
+		$lang = Translations::lang( 'post', $post->ID );
+		if ( null === $lang || ! self::can_link( $from, $post, $lang ) ) {
+			return;
+		}
+		if ( ! Translations::get( 'post', $from ) ) {
+			Translations::set( 'post', $from, Languages::default_code() );
+		}
+		$stale = Translations::translation( 'post', $from, $lang );
+		if ( $stale && $stale !== $post->ID ) {
+			// Trashed or abandoned translation: replaced by this one.
+			Translations::unlink( 'post', $stale );
+		}
+		Translations::set( 'post', $post->ID, $lang, Translations::group( 'post', $from ) );
+	}
+
+	/**
+	 * Whether $post may become the $lang translation of the post $from.
+	 */
+	private static function can_link( int $from, \WP_Post $post, string $lang ): bool {
+		$original = get_post( $from );
+		if ( ! $original instanceof \WP_Post || $original->ID === $post->ID || $original->post_type !== $post->post_type
+			|| in_array( $original->post_status, array( 'trash', 'auto-draft', 'inherit' ), true )
+			|| ! current_user_can( 'edit_post', $from ) ) {
+			return false;
+		}
+		return Translations::lang_or_default( 'post', $from ) !== $lang && ! Engine::target( $from, $lang );
 	}
 
 	/**

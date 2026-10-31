@@ -20,7 +20,8 @@ defined( 'ABSPATH' ) || exit;
 
 final class Queue {
 
-	private const LOCK_SECONDS = 300;
+	/** A step makes at most one API request (150 s timeout): wide margin before another worker may take the job over. */
+	private const LOCK_SECONDS = 900;
 
 	private const MAX_ATTEMPTS = 6;
 
@@ -243,16 +244,18 @@ final class Queue {
 			if ( ! $job ) {
 				return null;
 			}
+			$lock    = gmdate( 'Y-m-d H:i:s', time() + self::LOCK_SECONDS );
 			$claimed = $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 				$wpdb->prepare(
 					'UPDATE ' . self::table() . " SET status = 'running', locked_until = %s, updated = %s WHERE id = %d AND status IN ('pending','running') AND ( locked_until IS NULL OR locked_until < %s )", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-					gmdate( 'Y-m-d H:i:s', time() + self::LOCK_SECONDS ),
+					$lock,
 					$now,
 					(int) $job->id,
 					$now
 				)
 			);
 			if ( 1 === (int) $claimed ) {
+				$job->lock = $lock;
 				return $job;
 			}
 		}
@@ -267,8 +270,14 @@ final class Queue {
 		global $wpdb;
 		$now    = current_time( 'mysql', true );
 		$status = (string) $result['status'];
+		// Only while this worker still holds the job: after a lock timeout another
+		// worker may own it, and its state must not be overwritten.
+		$owned = array(
+			'id'           => (int) $job->id,
+			'locked_until' => (string) $job->lock,
+		);
 		if ( 'done' === $status ) {
-			$wpdb->delete( self::table(), array( 'id' => (int) $job->id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$wpdb->delete( self::table(), $owned, array( '%d', '%s' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 			return;
 		}
 		$attempts = (int) $job->attempts;
@@ -291,7 +300,9 @@ final class Queue {
 				'data'         => (string) wp_json_encode( $state ),
 				'updated'      => $now,
 			),
-			array( 'id' => (int) $job->id )
+			$owned,
+			null,
+			array( '%d', '%s' )
 		);
 	}
 

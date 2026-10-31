@@ -73,6 +73,11 @@ final class ListColumns {
 			$ids = wp_list_pluck( $posts, 'ID' );
 			Translations::prime( 'post', $ids );
 			Queue::prime( 'post', $ids );
+			$targets = array();
+			foreach ( $ids as $id ) {
+				$targets = array_merge( $targets, array_values( Translations::members( 'post', (int) $id ) ) );
+			}
+			_prime_post_caches( array_unique( $targets ), false, true );
 			update_meta_cache( 'post', $ids );
 		}
 		return $posts;
@@ -89,7 +94,6 @@ final class ListColumns {
 		$post_id = (int) $post_id;
 		$source  = Engine::source_of( 'post', $post_id );
 		$lang    = Translations::lang_or_default( 'post', $post_id );
-		$members = Translations::members( 'post', $post_id );
 		echo '<div class="gaiml-flags" data-gaiml-object="post" data-gaiml-id="' . esc_attr( (string) $source ) . '">';
 		foreach ( Languages::all() as $code => $language ) {
 			$label = strtoupper( (string) $language['slug'] );
@@ -98,18 +102,19 @@ final class ListColumns {
 				continue;
 			}
 			$status = Engine::status( $source, $code );
+			$target = Engine::target( $source, $code );
 			list( $text, $class ) = Admin::status_label( $status );
-			if ( isset( $members[ $code ] ) ) {
+			if ( $target ) {
 				printf(
 					'<a class="gaiml-flag %s" href="%s" title="%s">%s</a>',
 					esc_attr( $class ),
-					esc_url( (string) get_edit_post_link( $members[ $code ] ) ),
+					esc_url( (string) get_edit_post_link( $target ) ),
 					esc_attr( $language['name'] . ' — ' . $text ),
 					esc_html( $label )
 				);
 			} elseif ( 'queued' === $status ) {
 				printf( '<span class="gaiml-flag %s" title="%s">%s…</span>', esc_attr( $class ), esc_attr( $language['name'] . ' — ' . $text ), esc_html( $label ) );
-			} elseif ( current_user_can( 'edit_post', $source ) ) {
+			} elseif ( Permissions::can_translate( 'post', $source ) ) {
 				printf(
 					'<button type="button" class="gaiml-flag gaiml-translate %s" data-langs="%s" data-force="0" title="%s">+%s</button>',
 					esc_attr( $class ),
@@ -190,7 +195,7 @@ final class ListColumns {
 		$count = 0;
 		foreach ( (array) $ids as $id ) {
 			$source = Engine::source_of( 'post', (int) $id );
-			if ( ! current_user_can( 'edit_post', $source ) ) {
+			if ( ! Permissions::can_translate( 'post', $source ) ) {
 				continue;
 			}
 			$langs = array();
@@ -200,7 +205,7 @@ final class ListColumns {
 					$langs[] = $lang;
 				}
 			}
-			$count += Queue::enqueue( 'post', $source, $langs );
+			$count += Queue::enqueue( 'post', $source, Permissions::allowed_langs( 'post', $source, $langs ) );
 		}
 		return add_query_arg( 'gaiml_queued', $count, (string) $redirect );
 	}

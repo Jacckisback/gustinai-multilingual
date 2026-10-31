@@ -32,7 +32,7 @@ add_filter(
 				}
 				$out = array();
 				foreach ( $data['items'] as $item ) {
-					$text  = false !== strpos( $item['text'], 'casse' ) ? 'Broken <g1>markup' : '[DE] ' . $item['text'];
+					$text  = false !== strpos( $item['text'], 'casse' ) ? 'Broken <g1>markup' : 'DE· ' . $item['text'];
 					$out[] = array( 'id' => $item['id'], 'text' => $text );
 				}
 				return array( 'text' => wp_json_encode( array( 'translations' => $out ) ), 'usage' => array( 'input' => 1, 'output' => 1 ) );
@@ -71,7 +71,7 @@ $check  = static function ( string $name, bool $pass ) use ( &$ok, &$fail ) {
 };
 $check( 'translation created', $target > 0 );
 $check( 'batches shrank after truncation', max( $GLOBALS['gaiml_batches'] ) > 2 && end( $GLOBALS['gaiml_batches'] ) <= 2 );
-$check( 'paragraphs translated', 6 === substr_count( $out, '[DE] Paragraphe' ) );
+$check( 'paragraphs translated', 6 === substr_count( $out, 'DE· Paragraphe' ) );
 $check( 'broken answer kept in original language', false !== strpos( $out, 'Ce texte <em>casse</em> les balises.' ) );
 $check( 'no broken markup', false === strpos( $out, '<g1>' ) && substr_count( $out, '<p>' ) === substr_count( $out, '</p>' ) );
 $check( 'block delimiters intact', 7 === substr_count( $out, '<!-- wp:paragraph -->' ) && 7 === substr_count( $out, '<!-- /wp:paragraph -->' ) );

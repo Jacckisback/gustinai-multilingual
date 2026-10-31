@@ -43,7 +43,8 @@ final class Strings {
 			self::$options = Memory::lookup( array( self::raw_option( 'blogname' ), self::raw_option( 'blogdescription' ) ), Languages::default_code(), $lang );
 		}
 		$found = isset( self::$options[ $value ] ) ? self::$options : Memory::lookup( array( $value ), Languages::default_code(), $lang );
-		return isset( $found[ $value ] ) ? Placeholders::plain( $found[ $value ] ) : $value;
+		// Stored like core stores these options: escaped (sanitize_option() runs esc_html()).
+		return isset( $found[ $value ] ) ? esc_html( Placeholders::plain( $found[ $value ] ) ) : $value;
 	}
 
 	/**

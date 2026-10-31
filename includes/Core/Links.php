@@ -83,6 +83,18 @@ final class Links {
 	 * @return array{0: string, 1: string}|null
 	 */
 	public static function split( string $url ): ?array {
+		if ( '' !== $url && '/' === $url[0] && ( ! isset( $url[1] ) || '/' !== $url[1] ) ) {
+			// Root-relative URL, e.g. home_url( $path, 'relative' ).
+			$path = rtrim( (string) wp_parse_url( self::raw_home(), PHP_URL_PATH ), '/' );
+			if ( '' !== $path && 0 !== stripos( $url, $path ) ) {
+				return null;
+			}
+			$rest = (string) substr( $url, strlen( $path ) );
+			if ( '' !== $rest && ! in_array( $rest[0], array( '/', '?', '#' ), true ) ) {
+				return null;
+			}
+			return array( substr( $url, 0, strlen( $path ) ), $rest );
+		}
 		$home      = preg_replace( '#^https?:#i', '', self::raw_home() );
 		$no_scheme = preg_replace( '#^https?:#i', '', $url );
 		if ( '' === $home || 0 !== stripos( (string) $no_scheme, (string) $home ) ) {
@@ -348,6 +360,10 @@ final class Links {
 		self::suspend();
 		try {
 			$post_id = url_to_postid( $url );
+			if ( ! $post_id ) {
+				// url_to_postid() ignores the posts page (not singular).
+				$post_id = Query::post_by_path( $path, Languages::default_code(), 'page' );
+			}
 			if ( $post_id ) {
 				return array( 'post', (int) $post_id );
 			}

@@ -48,22 +48,6 @@ final class Ajax {
 	}
 
 	/**
-	 * Whether the current user may translate an object.
-	 */
-	private static function can_translate( string $type, int $id ): bool {
-		if ( 'term' === $type ) {
-			$term = get_term( $id );
-			return $term instanceof \WP_Term && Content::is_translatable_taxonomy( $term->taxonomy ) && current_user_can( 'edit_term', $id );
-		}
-		$post = get_post( $id );
-		if ( ! $post || ! Content::is_translatable_post( $post ) || ! current_user_can( 'edit_post', $id ) ) {
-			return false;
-		}
-		$object = get_post_type_object( $post->post_type );
-		return 'publish' !== $post->post_status || ( $object && current_user_can( $object->cap->publish_posts ) );
-	}
-
-	/**
 	 * Queues translations of one post or term.
 	 */
 	public static function translate(): void {
@@ -74,10 +58,15 @@ final class Ajax {
 		$force = ! empty( $_POST['force'] );
 		// phpcs:enable
 		$id = Engine::source_of( $type, $id );
-		if ( ! $id || ! self::can_translate( $type, $id ) ) {
+		if ( ! $id || ! Permissions::can_translate( $type, $id ) ) {
 			wp_send_json_error( array( 'message' => __( 'You are not allowed to translate this content.', 'gustinai-multilingual' ) ), 403 );
 		}
-		$count = Queue::enqueue( $type, $id, self::langs_param(), $force );
+		$requested = self::langs_param();
+		$langs     = Permissions::allowed_langs( $type, $id, $requested );
+		if ( $requested && ! $langs ) {
+			wp_send_json_error( array( 'message' => __( 'You are not allowed to modify this translation.', 'gustinai-multilingual' ) ), 403 );
+		}
+		$count = Queue::enqueue( $type, $id, $langs, $force );
 		wp_send_json_success(
 			array(
 				'queued' => $count,
@@ -99,6 +88,9 @@ final class Ajax {
 			'type' => $type,
 			'id'   => $id,
 		) : array();
+		if ( $filter && ! Permissions::can_view( $type, $id ) ) {
+			$filter = array();
+		}
 		$result = Queue::run( 8.0, $filter );
 		$out    = array(
 			'stats'   => $result['stats'],
@@ -106,6 +98,17 @@ final class Ajax {
 			'object'  => array(),
 		);
 		foreach ( $result['results'] as $row ) {
+			if ( ! Permissions::can_view( $row['type'], $row['id'] ) ) {
+				// Processed, but the details of other people's content are not shown.
+				$row = array_merge(
+					$row,
+					array(
+						'id'      => 0,
+						'message' => '',
+						'target'  => 0,
+					)
+				);
+			}
 			$row['language']  = Languages::name( $row['lang'] );
 			$row['edit']      = ( $row['target'] && 'post' === $row['type'] ) ? (string) get_edit_post_link( $row['target'], 'url' ) : '';
 			$out['results'][] = $row;
@@ -215,14 +218,19 @@ final class Ajax {
 		);
 		$ids = array_map( 'intval', $ids );
 		Translations::prime( 'post', $ids );
+		$targets = array();
+		foreach ( $ids as $id ) {
+			$targets = array_merge( $targets, array_values( Translations::members( 'post', $id ) ) );
+		}
+		_prime_post_caches( array_unique( array_merge( $ids, $targets ) ), false, false );
 		$out = array();
 		foreach ( $ids as $id ) {
 			if ( ! Content::is_translatable_post( $id ) ) {
 				continue;
 			}
-			$members = Translations::members( 'post', $id );
 			foreach ( $langs as $lang ) {
-				if ( ! isset( $members[ $lang ] ) ) {
+				if ( ! Engine::target( $id, $lang ) ) {
+					// Missing, trashed or abandoned translation.
 					$out[ $id ][] = $lang;
 				} elseif ( $outdated && in_array( Engine::status( $id, $lang ), array( 'outdated', 'failed' ), true ) ) {
 					$out[ $id ][] = $lang;
@@ -287,7 +295,7 @@ final class Ajax {
 		if ( $params['outdated'] ) {
 			foreach ( $candidates as $id => $langs ) {
 				foreach ( $langs as $lang ) {
-					if ( Translations::translation( 'post', $id, $lang ) ) {
+					if ( Engine::target( $id, $lang ) ) {
 						$count += Queue::enqueue( 'post', $id, array( $lang ) );
 					}
 				}
@@ -339,7 +347,7 @@ final class Ajax {
 		$lang = isset( $_GET['lang'] ) ? sanitize_key( wp_unslash( $_GET['lang'] ) ) : '';
 		// phpcs:enable
 		check_admin_referer( 'gaiml_translate_' . $id );
-		if ( ! $id || ! self::can_translate( 'post', $id ) || ! Languages::exists( $lang ) ) {
+		if ( ! $id || ! Permissions::can_translate( 'post', $id ) || ! Languages::exists( $lang ) || ! Permissions::allowed_langs( 'post', $id, array( $lang ) ) ) {
 			wp_die( esc_html__( 'You are not allowed to translate this content.', 'gustinai-multilingual' ), 403 );
 		}
 		Queue::enqueue( 'post', $id, array( $lang ) );

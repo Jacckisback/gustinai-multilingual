@@ -16,7 +16,7 @@
 | Traductions qui cassent la mise en page | L'IA ne voit jamais le HTML : seuls les textes sont envoyés, le balisage est remplacé par des repères (`<g1>…</g1>`). Blocs Gutenberg, données Elementor et shortcodes Divi restent identiques à l'octet près. |
 | Traduction à la volée lente et coûteuse | Chaque traduction est une vraie page enregistrée : zéro appel IA pendant la visite, compatible avec tous les caches. |
 | URL non traduites, catégories en français sur le site anglais | Slugs traduits (`/en/summer-cocktails/`), catégories et étiquettes traduites avec leur hiérarchie, même slug possible dans deux langues pour les pages et articles (`/contact/` et `/en/contact/`). |
-| SEO multilingue mal configuré | hreflang + x-default, canonical, `<html lang>`, locale transmise aux extensions SEO (og:locale), sitemaps avec toutes les langues, champs Yoast / Rank Math / SEOPress / The SEO Framework / AIOSEO traduits. |
+| SEO multilingue mal configuré | hreflang + x-default, canonical, `<html lang>`, locale transmise aux extensions SEO (og:locale), sitemaps avec toutes les langues actives, champs Yoast / Rank Math / SEOPress / The SEO Framework / AIOSEO traduits. |
 | Contenu invisible pour les IA | llms.txt par langue, données structurées `inLanguage` + `workTranslation` / `translationOfWork`, liens internes qui restent dans la langue. |
 | Facture d'IA imprévisible | Coût estimé avant de lancer, mémoire de traduction (un texte identique n'est traduit qu'une fois, une page modifiée ne renvoie que les phrases modifiées), consommation du mois affichée. |
 | Retouches manuelles écrasées | Une traduction retouchée à la main n'est jamais écrasée automatiquement. |
@@ -62,7 +62,7 @@ Prix vérifiés le 31/10/2026 sur les pages officielles d'Anthropic et d'OpenAI.
 ### SEO
 - `hreflang` sur chaque page avec toutes ses traductions + `x-default`, canonical juste, `<html lang="en-US">`.
 - Slugs traduits (pages, articles, catégories, étiquettes), pages enfants rattachées au parent traduit.
-- Sitemaps WordPress avec toutes les langues ; Yoast SEO / Rank Math récupèrent les bonnes URL.
+- Sitemaps WordPress avec toutes les langues actives (le contenu d'une langue retirée n'y figure plus) ; Yoast SEO / Rank Math récupèrent les bonnes URL.
 - Une URL `/en/` ne montre jamais un contenu non traduit (pas de contenu dupliqué) ; une URL erronée redirige vers la traduction de la langue demandée.
 
 ### GEO (moteurs de réponse IA)
@@ -79,9 +79,9 @@ Prix vérifiés le 31/10/2026 sur les pages officielles d'Anthropic et d'OpenAI.
 - Filtrage par langue en une jointure indexée ; langues des pages, termes et menus chargées par lots (≈ 10 requêtes indexées de plus par page, ~0 ms mesurables).
 
 ### Sécurité
-- Nonces et vérification des droits sur chaque action ; un contributeur ne peut traduire que ce qu'il peut modifier et publier.
+- Nonces et vérification des droits sur chaque action ; un contributeur ne peut traduire que ce qu'il peut modifier et publier, et ne peut pas écraser une traduction qu'il n'a pas le droit de modifier.
 - Clés API chiffrées en base (XSalsa20-Poly1305), jamais réaffichées ; encore mieux : constantes dans `wp-config.php`.
-- La sortie de l'IA ne peut pas injecter de balisage : seuls les repères attendus sont restaurés, tout le reste est échappé.
+- La sortie de l'IA ne peut pas injecter de balisage ni de shortcode : seuls les repères attendus sont restaurés, tout le reste est échappé (crochets compris) ; les attributs HTML sont lus un par un, jamais réinterprétés.
 - Requêtes SQL préparées, appels API uniquement vers `api.anthropic.com` et `api.openai.com`, requêtes OpenAI non stockées (`store: false`).
 
 ## Installation
@@ -130,10 +130,11 @@ Détails internes : [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 ## Tests
 
 ```bash
-php tests/unit.php                               # 42 tests du découpage (Gutenberg, Divi 4/5, Elementor)
+php tests/unit.php                               # 52 tests du découpage (Gutenberg, Divi 4/5, Elementor, injections)
 wp eval-file tests/e2e/providers.php             # 28 tests des connecteurs Claude / OpenAI (réponses simulées)
 cp tests/e2e/mock-provider.php wp-content/mu-plugins/ && wp eval-file tests/e2e/setup.php && wp gaiml bulk
 wp eval-file tests/e2e/engine.php                # robustesse (réponses coupées, balisage cassé)
+wp eval-file tests/e2e/review.php                # 24 tests de non-régression (corbeille, concurrence, slugs, sitemaps, verrous)
 ```
 
 Testé sur WordPress 7.1.4 + MariaDB 10.11 + PHP 8.3, Elementor 4.3.5, thèmes Twenty Twenty-Five (blocs) et Twenty Twenty-One (classique).

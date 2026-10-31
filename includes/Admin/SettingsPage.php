@@ -414,18 +414,32 @@ final class SettingsPage {
 		$add     = isset( $_POST['add'] ) ? array_map( 'sanitize_key', (array) wp_unslash( $_POST['add'] ) ) : array();
 		$default = isset( $_POST['default_lang'] ) ? sanitize_key( wp_unslash( $_POST['default_lang'] ) ) : Languages::default_code();
 		// phpcs:enable
-		$list  = array();
-		$slugs = array();
+		$list     = array();
+		$slugs    = array();
+		$reserved = self::reserved_slugs();
 		foreach ( $posted as $code => $row ) {
 			$code = sanitize_key( (string) $code );
-			if ( ! Languages::exists( $code ) || ( in_array( $code, $remove, true ) && $code !== $default ) ) {
+			if ( ! Languages::exists( $code ) ) {
+				continue;
+			}
+			if ( in_array( $code, $remove, true ) && $code !== $default ) {
+				$messages[] = array(
+					'warning',
+					/* translators: %s: language name. */
+					sprintf( __( '%s removed. Its content stays in the database but is no longer shown on the site, in the sitemaps or in the language switcher. Add the language again to bring it back.', 'gustinai-multilingual' ), Languages::name( $code ) ),
+				);
 				continue;
 			}
 			$entry  = Languages::get( $code );
-			$slug   = strtolower( (string) preg_replace( '~[^a-z0-9-]~i', '', (string) ( $row['slug'] ?? $code ) ) );
+			$asked  = strtolower( (string) preg_replace( '~[^a-z0-9-]~i', '', (string) ( $row['slug'] ?? $code ) ) );
+			$slug   = self::free_slug( $asked, $code, $slugs, $reserved );
 			$locale = (string) preg_replace( '~[^A-Za-z0-9_]~', '', (string) ( $row['locale'] ?? $entry['locale'] ) );
-			if ( strlen( $slug ) < 2 || isset( $slugs[ $slug ] ) ) {
-				$slug = $code;
+			if ( $slug !== $asked && '' !== $asked ) {
+				$messages[] = array(
+					'warning',
+					/* translators: 1: requested URL prefix, 2: URL prefix used instead. */
+					sprintf( __( 'The URL prefix "%1$s" is already used by WordPress or another language: "%2$s" is used instead.', 'gustinai-multilingual' ), $asked, $slug ),
+				);
 			}
 			$slugs[ $slug ] = true;
 			$list[ $code ]  = array_merge(
@@ -442,9 +456,7 @@ final class SettingsPage {
 			if ( ! $entry || isset( $list[ $code ] ) ) {
 				continue;
 			}
-			if ( isset( $slugs[ $entry['slug'] ] ) ) {
-				$entry['slug'] = $code . '-' . count( $list );
-			}
+			$entry['slug']           = self::free_slug( (string) $entry['slug'], $code, $slugs, $reserved );
 			$slugs[ $entry['slug'] ] = true;
 			$list[ $code ]           = $entry;
 			$downloaded[]            = $entry['locale'];
@@ -469,6 +481,64 @@ final class SettingsPage {
 			'default_lang' => $default,
 			'languages'    => array_values( $list ),
 		);
+	}
+
+	/**
+	 * First URL segments used by WordPress routes: a language prefix cannot take them.
+	 *
+	 * @return string[]
+	 */
+	private static function reserved_slugs(): array {
+		global $wp_rewrite;
+		$reserved = array( 'wp-admin', 'wp-content', 'wp-includes', 'wp-json', 'wp-login', 'wp-sitemap', 'xmlrpc', 'feed', 'rss', 'rss2', 'atom', 'rdf', 'page', 'comments', 'comment-page', 'search', 'category', 'tag', 'author', 'date', 'embed', 'trackback', 'attachment', 'type', 'llms', 'robots', 'favicon' );
+		$bases    = array( (string) get_option( 'category_base' ), (string) get_option( 'tag_base' ) );
+		if ( $wp_rewrite instanceof \WP_Rewrite ) {
+			$bases[] = (string) $wp_rewrite->front;
+			$bases[] = (string) $wp_rewrite->search_base;
+			$bases[] = (string) $wp_rewrite->author_base;
+		}
+		foreach ( get_post_types( array( 'public' => true ), 'objects' ) as $object ) {
+			if ( is_array( $object->rewrite ) && ! empty( $object->rewrite['slug'] ) ) {
+				$bases[] = (string) $object->rewrite['slug'];
+			}
+			if ( is_string( $object->has_archive ) ) {
+				$bases[] = $object->has_archive;
+			}
+		}
+		foreach ( get_taxonomies( array( 'public' => true ), 'objects' ) as $object ) {
+			if ( is_array( $object->rewrite ) && ! empty( $object->rewrite['slug'] ) ) {
+				$bases[] = (string) $object->rewrite['slug'];
+			}
+		}
+		foreach ( $bases as $base ) {
+			$first = strtolower( (string) strtok( trim( $base, '/' ), '/' ) );
+			if ( '' !== $first && false === strpos( $first, '%' ) ) {
+				$reserved[] = $first;
+			}
+		}
+		return array_values( array_unique( $reserved ) );
+	}
+
+	/**
+	 * $slug when it is free, otherwise the language code (or code-2, code-3…).
+	 *
+	 * @param array<string, true> $taken
+	 * @param string[]            $reserved
+	 */
+	private static function free_slug( string $slug, string $code, array $taken, array $reserved ): string {
+		$free = static fn( string $s ): bool => strlen( $s ) >= 2 && ! isset( $taken[ $s ] ) && ! in_array( $s, $reserved, true );
+		if ( $free( $slug ) ) {
+			return $slug;
+		}
+		$base = trim( (string) preg_replace( '~[^a-z0-9-]+~', '-', strtolower( $code ) ), '-' );
+		if ( $free( $base ) ) {
+			return $base;
+		}
+		for ( $i = 2; ; $i++ ) {
+			if ( $free( $base . '-' . $i ) ) {
+				return $base . '-' . $i;
+			}
+		}
 	}
 
 	/* ---------------------------------------------------------------------

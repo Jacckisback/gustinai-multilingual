@@ -130,6 +130,10 @@ abstract class Provider {
 		if ( 429 === $code && false !== stripos( $message, 'quota' ) ) {
 			$type = 'gaiml_quota';
 		}
+		if ( 'gaiml_auth' === $type ) {
+			// Provider messages can quote part of the key: never show them.
+			$message = __( 'the API key is invalid or has no access to this model. Check it in Multilingual > Settings > AI translation.', 'gustinai-multilingual' );
+		}
 		/* translators: 1: provider name, 2: HTTP status, 3: error message from the provider. */
 		return new \WP_Error( $type, sprintf( __( '%1$s error %2$d: %3$s', 'gustinai-multilingual' ), $this->name(), $code, $message ), array( 'retry_after' => $response['retry_after'] ) );
 	}

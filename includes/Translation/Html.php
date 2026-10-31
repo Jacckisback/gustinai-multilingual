@@ -91,7 +91,12 @@ final class Html {
 			return static fn() => $value;
 		}
 		$id = $bag->add( trim( $text ), $kind );
-		return static fn( array $tr ) => isset( $tr[ $id ] ) ? Placeholders::plain( $tr[ $id ] ) : $value;
+		return static function ( array $tr ) use ( $id, $text, $value ): string {
+			if ( ! isset( $tr[ $id ] ) || Placeholders::adds_shortcodes( $text, $tr[ $id ] ) ) {
+				return $value;
+			}
+			return Placeholders::plain( $tr[ $id ] );
+		};
 	}
 
 	/* ---------------------------------------------------------------------
@@ -463,53 +468,106 @@ final class Html {
 	}
 
 	/**
+	 * Attributes of a tag or shortcode at their real positions (values are
+	 * consumed whole, so text inside a value is never taken for an attribute).
+	 *
+	 * @return array<int, array{name: string, raw: string, value: string|null, quote: string, start: int, length: int, head: string}>
+	 */
+	private static function attributes( string $tag ): array {
+		$out = array();
+		if ( ! preg_match( '~^[<\[]/?[a-zA-Z][^\s/>\]]*~', $tag, $m ) ) {
+			return $out;
+		}
+		$offset = strlen( $m[0] );
+		$re     = '~\G(\s+)([^\s"\'>/=\]]+)(?:(\s*=\s*)(?:"([^"]*)"|\'([^\']*)\'|([^\s"\'=<>`\]]+)))?~';
+		while ( preg_match( $re, $tag, $a, PREG_OFFSET_CAPTURE, $offset ) ) {
+			$value = null;
+			$quote = '';
+			if ( isset( $a[4] ) && -1 !== $a[4][1] ) {
+				$value = $a[4][0];
+				$quote = '"';
+			} elseif ( isset( $a[5] ) && -1 !== $a[5][1] ) {
+				$value = $a[5][0];
+				$quote = "'";
+			} elseif ( isset( $a[6] ) && -1 !== $a[6][1] ) {
+				$value = $a[6][0];
+			}
+			$out[]  = array(
+				'name'   => strtolower( $a[2][0] ),
+				'raw'    => $a[2][0],
+				'value'  => $value,
+				'quote'  => $quote,
+				'start'  => $a[0][1],
+				'length' => strlen( $a[0][0] ),
+				'head'   => $a[1][0] . $a[2][0] . ( isset( $a[3] ) && -1 !== $a[3][1] ? $a[3][0] : '=' ),
+			);
+			$offset = $a[0][1] + strlen( $a[0][0] );
+		}
+		return $out;
+	}
+
+	/**
+	 * Rebuilds a tag with new attribute values (index => full new attribute text).
+	 *
+	 * @param array<int, array<string, mixed>> $attrs
+	 * @param array<int, string>               $replace
+	 */
+	private static function rebuild( string $tag, array $attrs, array $replace ): string {
+		krsort( $replace );
+		foreach ( $replace as $i => $text ) {
+			$tag = substr_replace( $tag, $text, $attrs[ $i ]['start'], $attrs[ $i ]['length'] );
+		}
+		return $tag;
+	}
+
+	/**
 	 * @param array<string, mixed> $opts
 	 * @return string|\Closure
 	 */
 	private static function prepare_tag( string $tag, string $name, Bag $bag, array $opts ) {
-		$pattern = '~(\s)(alt|title|placeholder|aria-label|value)(\s*=\s*)(?:"([^"]*)"|\'([^\']*)\')~i';
-		$attrs   = array();
-		if ( ! self::no_translate( $tag ) && preg_match_all( $pattern, $tag, $matches, PREG_SET_ORDER ) ) {
-			foreach ( $matches as $a ) {
-				$attr = strtolower( $a[2] );
-				if ( 'value' === $attr && ! ( 'input' === $name && preg_match( '~\stype\s*=\s*["\']?(submit|button|reset)\b~i', $tag ) ) ) {
-					continue;
-				}
-				$value = Placeholders::decode( isset( $a[5] ) && '' !== $a[5] ? $a[5] : $a[4] );
-				if ( Placeholders::has_words( $value ) ) {
-					$attrs[ $attr ] = $bag->add( trim( $value ), 'label' );
-				}
+		$attrs     = self::attributes( $tag );
+		$type      = '';
+		$translate = array();
+		$links     = array();
+		foreach ( $attrs as $a ) {
+			if ( 'type' === $a['name'] ) {
+				$type = strtolower( (string) $a['value'] );
 			}
 		}
-		$link = isset( $opts['link'] ) && is_callable( $opts['link'] ) && in_array( $name, array( 'a', 'area' ), true ) && false !== stripos( $tag, 'href' );
-		if ( ! $attrs && ! $link ) {
+		$skip     = self::no_translate( $tag );
+		$localize = isset( $opts['link'] ) && is_callable( $opts['link'] ) && in_array( $name, array( 'a', 'area' ), true ) ? $opts['link'] : null;
+		foreach ( $attrs as $i => $a ) {
+			if ( null === $a['value'] ) {
+				continue;
+			}
+			$text_attr = in_array( $a['name'], array( 'alt', 'title', 'placeholder', 'aria-label' ), true )
+				|| ( 'value' === $a['name'] && 'input' === $name && in_array( $type, array( 'submit', 'button', 'reset' ), true ) );
+			if ( $text_attr && ! $skip ) {
+				$value = Placeholders::decode( $a['value'] );
+				if ( Placeholders::has_words( $value ) ) {
+					$translate[ $i ] = $bag->add( trim( $value ), 'label' );
+				}
+			} elseif ( 'href' === $a['name'] && null !== $localize ) {
+				$links[] = $i;
+			}
+		}
+		if ( ! $translate && ! $links ) {
 			return $tag;
 		}
-		$localize = $link ? $opts['link'] : null;
-		return static function ( array $tr ) use ( $tag, $attrs, $pattern, $localize ): string {
-			$out = $tag;
-			if ( $attrs ) {
-				$out = (string) preg_replace_callback(
-					$pattern,
-					static function ( $a ) use ( $attrs, $tr ) {
-						$attr = strtolower( $a[2] );
-						if ( ! isset( $attrs[ $attr ], $tr[ $attrs[ $attr ] ] ) ) {
-							return $a[0];
-						}
-						$quote = "'" === substr( $a[0], -1 ) ? "'" : '"';
-						return $a[1] . $a[2] . $a[3] . $quote . Placeholders::attr( $tr[ $attrs[ $attr ] ], $quote ) . $quote;
-					},
-					$out
-				);
+		return static function ( array $tr ) use ( $tag, $attrs, $translate, $links, $localize ): string {
+			$replace = array();
+			foreach ( $translate as $i => $id ) {
+				if ( isset( $tr[ $id ] ) ) {
+					$replace[ $i ] = $attrs[ $i ]['head'] . '"' . Placeholders::attr( $tr[ $id ] ) . '"';
+				}
 			}
-			if ( null !== $localize ) {
-				$out = (string) preg_replace_callback(
-					'~(\shref\s*=\s*)(["\'])(.*?)\2~is',
-					static fn( $h ) => $h[1] . $h[2] . call_user_func( $localize, $h[3] ) . $h[2],
-					$out
-				);
+			foreach ( $links as $i ) {
+				$url = (string) call_user_func( $localize, (string) $attrs[ $i ]['value'] );
+				if ( $url !== $attrs[ $i ]['value'] ) {
+					$replace[ $i ] = $attrs[ $i ]['head'] . '"' . str_replace( array( '"', "'", '<', '>' ), array( '%22', '%27', '%3C', '%3E' ), $url ) . '"';
+				}
 			}
-			return $out;
+			return $replace ? self::rebuild( $tag, $attrs, $replace ) : $tag;
 		};
 	}
 
@@ -520,49 +578,48 @@ final class Html {
 	 * @return string|\Closure
 	 */
 	private static function prepare_shortcode( string $tag, Bag $bag, array $opts ) {
-		$pattern = '~(\s)([\w-]+)=(?:"([^"]*)"|\'([^\']*)\')~';
-		if ( ! preg_match_all( $pattern, $tag, $matches, PREG_SET_ORDER ) ) {
-			return $tag;
-		}
-		$texts = array();
-		$urls  = false;
-		foreach ( $matches as $a ) {
-			$key = strtolower( $a[2] );
-			$raw = isset( $a[4] ) && '' !== $a[4] ? $a[4] : $a[3];
-			if ( self::is_divi_url_key( $key ) ) {
-				$urls = $urls || ( isset( $opts['link'] ) && is_callable( $opts['link'] ) && '' !== $raw );
+		$attrs    = self::attributes( $tag );
+		$texts    = array();
+		$links    = array();
+		$localize = isset( $opts['link'] ) && is_callable( $opts['link'] ) ? $opts['link'] : null;
+		foreach ( $attrs as $i => $a ) {
+			if ( null === $a['value'] || '' === $a['quote'] ) {
 				continue;
 			}
-			if ( ! self::is_divi_text_key( $key ) ) {
+			if ( self::is_divi_url_key( $a['name'] ) ) {
+				if ( null !== $localize && '' !== $a['value'] ) {
+					$links[] = $i;
+				}
 				continue;
 			}
-			$value = str_replace( array( '%22', '%91', '%93' ), array( '"', '[', ']' ), $raw );
+			if ( ! self::is_divi_text_key( $a['name'] ) ) {
+				continue;
+			}
+			$value = str_replace( array( '%22', '%91', '%93' ), array( '"', '[', ']' ), $a['value'] );
 			if ( Placeholders::looks_like_text( Placeholders::decode( $value ) ) ) {
-				$texts[ $key ] = self::value( $value, $bag, $opts, 'label' );
+				$texts[ $i ] = self::value( $value, $bag, $opts, 'label' );
 			}
 		}
-		if ( ! $texts && ! $urls ) {
+		if ( ! $texts && ! $links ) {
 			return $tag;
 		}
-		$localize = $urls ? $opts['link'] : null;
-		return static function ( array $tr ) use ( $tag, $texts, $pattern, $localize ): string {
-			return (string) preg_replace_callback(
-				$pattern,
-				static function ( $a ) use ( $texts, $tr, $localize ) {
-					$key   = strtolower( $a[2] );
-					$quote = "'" === substr( $a[0], -1 ) ? "'" : '"';
-					if ( isset( $texts[ $key ] ) ) {
-						$value = str_replace( array( '"', '[', ']' ), array( '%22', '%91', '%93' ), $texts[ $key ]( $tr ) );
-						return $a[1] . $a[2] . '=' . $quote . $value . $quote;
-					}
-					if ( null !== $localize && self::is_divi_url_key( $key ) ) {
-						$raw = isset( $a[4] ) && '' !== $a[4] ? $a[4] : $a[3];
-						return $a[1] . $a[2] . '=' . $quote . call_user_func( $localize, $raw ) . $quote;
-					}
-					return $a[0];
-				},
-				$tag
-			);
+		return static function ( array $tr ) use ( $tag, $attrs, $texts, $links, $localize ): string {
+			$replace = array();
+			foreach ( $texts as $i => $render ) {
+				$quote = $attrs[ $i ]['quote'];
+				$value = str_replace( array( '"', '[', ']' ), array( '%22', '%91', '%93' ), $render( $tr ) );
+				if ( "'" === $quote ) {
+					$value = str_replace( "'", '&#039;', $value );
+				}
+				$replace[ $i ] = $attrs[ $i ]['head'] . $quote . $value . $quote;
+			}
+			foreach ( $links as $i ) {
+				$url = (string) call_user_func( $localize, (string) $attrs[ $i ]['value'] );
+				if ( $url !== $attrs[ $i ]['value'] ) {
+					$replace[ $i ] = $attrs[ $i ]['head'] . $attrs[ $i ]['quote'] . str_replace( array( '"', "'", '[', ']' ), array( '%22', '%27', '%91', '%93' ), $url ) . $attrs[ $i ]['quote'];
+				}
+			}
+			return $replace ? self::rebuild( $tag, $attrs, $replace ) : $tag;
 		};
 	}
 

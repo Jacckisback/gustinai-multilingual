@@ -227,7 +227,7 @@ final class Translations {
 			return false;
 		}
 		if ( $current ) {
-			$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$written = $wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 				self::table(),
 				array(
 					'lang'     => $lang,
@@ -241,7 +241,7 @@ final class Translations {
 				array( '%s', '%d' )
 			);
 		} else {
-			$wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$written = $wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 				self::table(),
 				array(
 					'object_type' => $type,
@@ -254,6 +254,10 @@ final class Translations {
 		}
 		self::forget( $type, $id, $current ? $current['group'] : 0 );
 		self::forget( $type, $id, $group );
+		if ( false === $written ) {
+			// Unique key (group, language) taken by a concurrent request.
+			return false;
+		}
 		/**
 		 * Fires when the language or translation group of an object changes.
 		 */

@@ -18,7 +18,7 @@ GustinAI Multilingual creates real translated pages (not on-the-fly translations
 
 **Works with your page builder.** Gutenberg (block attributes and synced patterns included), Elementor (all text widgets, links, images, templates), Divi 4 and Divi 5, the classic editor and custom HTML.
 
-**SEO.** Subdirectory URLs (/en/, /es/), translated slugs, translated categories and tags with their hierarchy, hreflang + x-default, correct canonical and html lang, sitemaps with every language, Yoast SEO / Rank Math / SEOPress / The SEO Framework / AIOSEO fields translated, no duplicate content on untranslated URLs.
+**SEO.** Subdirectory URLs (/en/, /es/), translated slugs, translated categories and tags with their hierarchy, hreflang + x-default, correct canonical and html lang, sitemaps with every active language, Yoast SEO / Rank Math / SEOPress / The SEO Framework / AIOSEO fields translated, no duplicate content on untranslated URLs.
 
 **GEO (AI answer engines).** llms.txt per language, schema.org inLanguage, workTranslation and translationOfWork, internal links that stay in the visitor's language.
 

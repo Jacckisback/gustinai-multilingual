@@ -65,6 +65,15 @@ final class Router {
 	}
 
 	/**
+	 * A front-end page view (GET/HEAD): the only context where options such as
+	 * page_on_front are swapped for their translation, so that code reading then
+	 * saving an option (REST, AJAX, forms) never writes a translated value back.
+	 */
+	public static function is_page_view(): bool {
+		return 'front' === self::$context && ! self::$neutral && in_array( $_SERVER['REQUEST_METHOD'] ?? 'GET', array( 'GET', 'HEAD' ), true ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+	}
+
+	/**
 	 * Whether generic URLs (home, archives, search) get the current language prefix.
 	 */
 	public static function filters_home(): bool {
@@ -119,13 +128,17 @@ final class Router {
 		// phpcs:enable
 
 		if ( wp_doing_ajax() ) {
+			$referer = wp_get_raw_referer();
+			if ( $referer && false !== strpos( $referer, '/wp-admin/' ) ) {
+				// AJAX of the admin screens: no visitor language.
+				return;
+			}
 			self::$context = 'ajax';
 			if ( Languages::exists( $requested ) ) {
 				self::$current = $requested;
 				return;
 			}
-			$referer = wp_get_raw_referer();
-			if ( $referer && false === strpos( $referer, '/wp-admin/' ) ) {
+			if ( $referer ) {
 				$ref_host  = (string) wp_parse_url( $referer, PHP_URL_HOST );
 				$home_host = (string) wp_parse_url( (string) get_option( 'home' ), PHP_URL_HOST );
 				if ( '' !== $ref_host && strtolower( $ref_host ) === strtolower( $home_host ) ) {

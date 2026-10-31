@@ -61,6 +61,15 @@ final class MetaBox {
 			return;
 		}
 		if ( 'auto-draft' === $post->post_status ) {
+			$link_to = (int) get_post_meta( $post->ID, '_gaiml_link_to', true );
+			if ( $link_to && current_user_can( 'edit_post', $link_to ) ) {
+				printf(
+					'<p class="description">%s <a href="%s">%s</a></p>',
+					esc_html__( 'Translation of', 'gustinai-multilingual' ),
+					esc_url( (string) get_edit_post_link( $link_to ) ),
+					esc_html( get_the_title( $link_to ) )
+				);
+			}
 			echo '<p class="description">' . esc_html__( 'Save the content first, then translate it here.', 'gustinai-multilingual' ) . '</p></div>';
 			return;
 		}
@@ -82,7 +91,7 @@ final class MetaBox {
 				continue;
 			}
 			$status = Engine::status( $source, $code );
-			$target = Translations::translation( 'post', $source, $code );
+			$target = Engine::target( $source, $code );
 			list( $label, $class ) = Admin::status_label( $status );
 			echo '<li class="gaiml-lang" data-lang="' . esc_attr( $code ) . '">';
 			echo '<span class="gaiml-lang__name">' . esc_html( $language['name'] ) . '</span> ';
@@ -94,7 +103,7 @@ final class MetaBox {
 					printf( '<a href="%s" target="_blank">%s</a> ', esc_url( (string) get_permalink( $target ) ), esc_html__( 'View', 'gustinai-multilingual' ) );
 				}
 			}
-			if ( 'queued' !== $status ) {
+			if ( 'queued' !== $status && ( ! $target || $target === $post->ID || Permissions::can_overwrite( 'post', $target ) ) ) {
 				$force = ( $target && $target !== $source && Engine::is_edited( $target ) ) ? '1' : '0';
 				$text  = $target ? __( 'Update', 'gustinai-multilingual' ) : __( 'Translate', 'gustinai-multilingual' );
 				printf(

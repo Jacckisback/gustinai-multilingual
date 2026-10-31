@@ -162,7 +162,33 @@ echo "Shortcodes inside content\n";
 $bag    = new Bag();
 $render = Html::extract( '<p>Écrivez-nous : [contact-form-7 id="12" title="Formulaire"] [Lire la suite]</p>', $bag );
 check( 'segments', array( 'Écrivez-nous : <x1/> [Lire la suite]' ), texts( $bag ) );
-check( 'render', '<p>ÉCRIVEZ-NOUS : [contact-form-7 id="12" title="Formulaire"] [LIRE LA SUITE]</p>', $render( fake_translate( $bag ) ) );
+check( 'render', '<p>ÉCRIVEZ-NOUS : [contact-form-7 id="12" title="Formulaire"] &#91;LIRE LA SUITE&#93;</p>', $render( fake_translate( $bag ) ) );
+
+echo "Injection attempts from the model\n";
+$bag    = new Bag();
+$render = Html::extract( '<p>Bonjour</p>', $bag );
+check( 'shortcode in text is inert', '<p>&#91;embed&#93;https://evil.test/&#91;/embed&#93; Hello</p>', $render( array( 's1' => '[embed]https://evil.test/[/embed] Hello' ) ) );
+$bag   = new Bag();
+$value = Html::value( 'Réserver', $bag );
+check( 'shortcode added to a value is refused', 'Réserver', $value( array( 's1' => 'Book [gaiml_switcher]' ) ) );
+$bag   = new Bag();
+$value = Html::value( 'Voir [year]', $bag );
+check( 'shortcode of the source is allowed', 'See [year]', $value( array( 's1' => 'See [year]' ) ) );
+check( 'shortcode with attributes is refused', 'Voir [year]', $value( array( 's1' => 'See [year] [embed src=x]' ) ) );
+check( 'closing tag is refused', 'Voir [year]', $value( array( 's1' => 'See [year] [/vc_column]' ) ) );
+$bag   = new Bag();
+$value = Html::value( 'Réserver [maintenant]', $bag );
+check( 'text in brackets is kept', 'Book [now]', $value( array( 's1' => 'Book [now]' ) ) );
+check( 'encoded brackets stay encoded', '&#91;gallery&#93; & co', Placeholders::decode( '&#91;gallery&#93; &amp; co' ) );
+
+echo "Attributes are read in order, values whole\n";
+$bag    = new Bag();
+$render = Html::extract( '<p><img src="/a.jpg" data-x=\'alt="Faux"\' alt="Un > deux" title=\'Le "meilleur"\' class=x>Texte</p>', $bag );
+check( 'segments', array( '<x1/>Texte', 'Le "meilleur"', 'Un > deux' ), sorted( texts( $bag ) ) );
+check( 'render', '<p><img src="/a.jpg" data-x=\'alt="Faux"\' alt="UN &gt; DEUX" title="LE &quot;MEILLEUR&quot;" class=x>TEXTE</p>', $render( fake_translate( $bag ) ) );
+$bag    = new Bag();
+$render = Html::extract( '[et_pb_button button_text=\'Voir la carte\' _builder_version="4.16"][/et_pb_button]', $bag );
+check( 'single-quoted shortcode attribute', '[et_pb_button button_text=\'C&#039;est l&#039;été\' _builder_version="4.16"][/et_pb_button]', $render( array( 's1' => "C'est l'été" ) ) );
 
 echo "Elementor data\n";
 $data   = array(

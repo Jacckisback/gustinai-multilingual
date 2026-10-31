@@ -118,8 +118,35 @@ final class Placeholders {
 	 * Text for an HTML context: no markup, valid entities kept, stray & escaped.
 	 */
 	public static function html_text( string $text ): string {
-		$text = str_replace( array( '<', '>' ), array( '&lt;', '&gt;' ), $text );
+		// Brackets are encoded too: a translated text can never become a live shortcode.
+		$text = str_replace( array( '<', '>', '[', ']' ), array( '&lt;', '&gt;', '&#91;', '&#93;' ), $text );
 		return (string) preg_replace( '/&(?!(?:[a-zA-Z][a-zA-Z0-9]{1,31}|#[0-9]{1,7}|#[xX][0-9a-fA-F]{1,6});)/', '&amp;', $text );
+	}
+
+	/**
+	 * Whether a plain translation adds shortcodes that its source does not have
+	 * (plain values can end up in content where shortcodes run). Same rule as the
+	 * extractor: "[Read more]" is text; "[gallery]", "[contact-form-7 id=1]" and
+	 * "[/button]" are shortcodes.
+	 */
+	public static function adds_shortcodes( string $source, string $translation ): bool {
+		if ( false === strpos( $translation, '[' ) ) {
+			return false;
+		}
+		$pattern = '~\[(/?)([a-zA-Z][\w-]*)([^\[\]]*)\]~';
+		preg_match_all( $pattern, $source, $before );
+		preg_match_all( $pattern, $translation, $after, PREG_SET_ORDER );
+		$known = array_map( 'strtolower', $before[2] );
+		foreach ( $after as $m ) {
+			if ( in_array( strtolower( $m[2] ), $known, true ) ) {
+				continue;
+			}
+			if ( '/' === $m[1] || false !== strpos( $m[3], '=' ) || preg_match( '~[_-]~', $m[2] )
+				|| ( function_exists( 'shortcode_exists' ) && shortcode_exists( $m[2] ) ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -134,9 +161,8 @@ final class Placeholders {
 	/**
 	 * Value for an HTML attribute delimited by $quote.
 	 */
-	public static function attr( string $text, string $quote = '"' ): string {
-		$text = self::html_text( self::plain( $text ) );
-		return '"' === $quote ? str_replace( '"', '&quot;', $text ) : str_replace( "'", '&#039;', $text );
+	public static function attr( string $text ): string {
+		return str_replace( array( '"', "'" ), array( '&quot;', '&#039;' ), self::html_text( self::plain( $text ) ) );
 	}
 
 	/**
@@ -147,7 +173,11 @@ final class Placeholders {
 		if ( false === strpos( $text, '&' ) ) {
 			return $text;
 		}
+		// Encoded brackets stay encoded: "&#91;gallery&#93;" must not turn into a shortcode.
+		$text    = (string) preg_replace( '~&(#91|#93|#x5[bd]|lsqb|rsqb|lbrack|rbrack);~i', "\x01$1\x02", $text );
 		$decoded = html_entity_decode( $text, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+		$decoded = (string) preg_replace( "~\x01([^\x02]+)\x02~", '&$1;', $decoded );
+		$text    = (string) preg_replace( "~\x01([^\x02]+)\x02~", '&$1;', $text );
 		return preg_match( self::PATTERN, $decoded ) ? $text : $decoded;
 	}
 
