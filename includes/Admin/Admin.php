@@ -70,6 +70,10 @@ final class Admin {
 					'confirmEdit' => __( 'This translation was edited by hand. Overwrite it with a new AI translation?', 'gustinai-multilingual' ),
 					'loading'     => __( 'Loading…', 'gustinai-multilingual' ),
 					'stopped'     => __( 'Paused. The remaining translations continue in the background.', 'gustinai-multilingual' ),
+					/* translators: 1: number of contents, 2: number of translations, 3: thousands of characters. */
+					'estimate'    => __( '%1$s contents, %2$s translations, about %3$sk characters', 'gustinai-multilingual' ),
+					/* translators: 1: estimated cost in US dollars, 2: model name. */
+					'cost'        => __( '≈ $%1$s with %2$s', 'gustinai-multilingual' ),
 				),
 			)
 		);

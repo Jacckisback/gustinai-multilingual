@@ -42,6 +42,7 @@ final class Router {
 			return;
 		}
 		add_filter( 'locale', array( self::class, 'locale' ), 1 );
+		add_action( 'init', array( self::class, 'text_direction' ), 0 );
 		if ( 'ajax' === self::$context ) {
 			add_filter( 'determine_locale', array( self::class, 'locale' ), 20 );
 		}
@@ -81,6 +82,18 @@ final class Router {
 			self::$context = $context;
 		}
 		return $previous;
+	}
+
+	/**
+	 * Right-to-left languages stay RTL even when their WordPress translation
+	 * files are not installed.
+	 */
+	public static function text_direction(): void {
+		global $wp_locale;
+		$language = null !== self::$current ? Languages::get( self::$current ) : null;
+		if ( $language && ! empty( $language['rtl'] ) && $wp_locale instanceof \WP_Locale ) {
+			$wp_locale->text_direction = 'rtl';
+		}
 	}
 
 	/**
@@ -197,7 +210,7 @@ final class Router {
 	 * hidden, and / redirects to /fr/ when it is not.
 	 */
 	public static function canonical_prefix(): void {
-		if ( self::$neutral || ! in_array( $_SERVER['REQUEST_METHOD'] ?? 'GET', array( 'GET', 'HEAD' ), true ) || is_preview() ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		if ( self::$neutral || ! in_array( $_SERVER['REQUEST_METHOD'] ?? 'GET', array( 'GET', 'HEAD' ), true ) || is_preview() || is_robots() || is_favicon() ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 			return;
 		}
 		$default = Languages::default_code();

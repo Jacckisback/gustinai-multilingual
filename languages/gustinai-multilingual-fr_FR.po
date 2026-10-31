@@ -9,8 +9,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-31T07:29:38+00:00\n"
-"PO-Revision-Date: 2026-10-31 07:29+0000\n"
+"POT-Creation-Date: 2026-10-31T07:38:02+00:00\n"
+"PO-Revision-Date: 2026-10-31 07:38+0000\n"
 "Language: fr_FR\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: WP-CLI 2.12.0\n"
@@ -54,17 +54,17 @@ msgid "Multilingual settings"
 msgstr "Réglages multilingues"
 
 #: includes/Admin/Admin.php:36
-#: includes/Admin/Admin.php:121
+#: includes/Admin/Admin.php:125
 msgid "Settings"
 msgstr "Réglages"
 
 #: includes/Admin/Admin.php:37
-#: includes/Admin/SettingsPage.php:481
+#: includes/Admin/SettingsPage.php:482
 msgid "Bulk translation"
 msgstr "Traduction en masse"
 
 #: includes/Admin/Admin.php:38
-#: includes/Admin/SettingsPage.php:552
+#: includes/Admin/SettingsPage.php:553
 msgid "Strings"
 msgstr "Chaînes"
 
@@ -81,7 +81,7 @@ msgid "Done"
 msgstr "Terminé"
 
 #: includes/Admin/Admin.php:65
-#: includes/Admin/Admin.php:134
+#: includes/Admin/Admin.php:138
 msgid "Failed"
 msgstr "Échec"
 
@@ -111,59 +111,71 @@ msgstr "Chargement…"
 msgid "Paused. The remaining translations continue in the background."
 msgstr "En pause. Les traductions restantes continuent en arrière-plan."
 
-#: includes/Admin/Admin.php:89
+#. translators: 1: number of contents, 2: number of translations, 3: thousands of characters.
+#: includes/Admin/Admin.php:74
+#, php-format
+msgid "%1$s contents, %2$s translations, about %3$sk characters"
+msgstr "%1$s contenus, %2$s traductions, environ %3$s k caractères"
+
+#. translators: 1: estimated cost in US dollars, 2: model name.
+#: includes/Admin/Admin.php:76
+#, php-format
+msgid "≈ $%1$s with %2$s"
+msgstr "≈ %1$s $ avec %2$s"
+
+#: includes/Admin/Admin.php:93
 msgid "Add a second language and an API key to translate your site."
 msgstr "Ajoutez une deuxième langue et une clé API pour traduire votre site."
 
-#: includes/Admin/Admin.php:91
+#: includes/Admin/Admin.php:95
 msgid "Set up languages"
 msgstr "Configurer les langues"
 
-#: includes/Admin/Admin.php:99
+#: includes/Admin/Admin.php:103
 msgid "No API key: AI translation is disabled."
 msgstr "Pas de clé API : la traduction par IA est désactivée."
 
-#: includes/Admin/Admin.php:101
+#: includes/Admin/Admin.php:105
 msgid "Add a Claude or OpenAI key"
 msgstr "Ajouter une clé Claude ou OpenAI"
 
 #. translators: %d: number of failed translations.
-#: includes/Admin/Admin.php:109
+#: includes/Admin/Admin.php:113
 #, php-format
 msgid "%d translation failed."
 msgid_plural "%d translations failed."
 msgstr[0] "%d traduction a échoué."
 msgstr[1] "%d traductions ont échoué."
 
-#: includes/Admin/Admin.php:111
+#: includes/Admin/Admin.php:115
 msgid "See why"
 msgstr "Voir pourquoi"
 
-#: includes/Admin/Admin.php:132
+#: includes/Admin/Admin.php:136
 msgid "Not translated"
 msgstr "Non traduit"
 
-#: includes/Admin/Admin.php:133
+#: includes/Admin/Admin.php:137
 msgid "In progress"
 msgstr "En cours"
 
-#: includes/Admin/Admin.php:135
+#: includes/Admin/Admin.php:139
 msgid "Up to date"
 msgstr "À jour"
 
-#: includes/Admin/Admin.php:136
+#: includes/Admin/Admin.php:140
 msgid "Original changed"
 msgstr "Original modifié"
 
-#: includes/Admin/Admin.php:137
+#: includes/Admin/Admin.php:141
 msgid "Edited by hand"
 msgstr "Modifié à la main"
 
-#: includes/Admin/Admin.php:138
+#: includes/Admin/Admin.php:142
 msgid "Manual translation"
 msgstr "Traduction manuelle"
 
-#: includes/Admin/Admin.php:139
+#: includes/Admin/Admin.php:143
 msgid "Original"
 msgstr "Original"
 
@@ -190,13 +202,13 @@ msgid "Translate into %s with AI"
 msgstr "Traduire en %s avec l’IA"
 
 #: includes/Admin/Ajax.php:36
-#: includes/Admin/SettingsPage.php:336
-#: includes/Admin/SettingsPage.php:597
+#: includes/Admin/SettingsPage.php:337
+#: includes/Admin/SettingsPage.php:598
 msgid "You are not allowed to do this."
 msgstr "Vous n’avez pas l’autorisation de faire cela."
 
 #: includes/Admin/Ajax.php:78
-#: includes/Admin/Ajax.php:333
+#: includes/Admin/Ajax.php:343
 msgid "You are not allowed to translate this content."
 msgstr "Vous n’avez pas l’autorisation de traduire ce contenu."
 
@@ -307,7 +319,7 @@ msgid "Default"
 msgstr "Par défaut"
 
 #: includes/Admin/SettingsPage.php:91
-#: includes/Admin/SettingsPage.php:534
+#: includes/Admin/SettingsPage.php:535
 #: includes/Admin/TermFields.php:34
 #: includes/Admin/TermFields.php:51
 #: includes/Frontend/Switcher.php:62
@@ -323,9 +335,9 @@ msgid "WordPress locale"
 msgstr "Locale WordPress"
 
 #: includes/Admin/SettingsPage.php:91
-#: includes/Admin/SettingsPage.php:488
-#: includes/Admin/SettingsPage.php:513
-#: includes/Admin/SettingsPage.php:534
+#: includes/Admin/SettingsPage.php:489
+#: includes/Admin/SettingsPage.php:514
+#: includes/Admin/SettingsPage.php:535
 msgid "Content"
 msgstr "Contenu"
 
@@ -405,342 +417,348 @@ msgid "Get a key in the %1$s. Stored encrypted. Even safer: define %2$s in wp-co
 msgstr "Obtenez une clé dans la %1$s. Stockée chiffrée. Encore plus sûr : définissez %2$s dans wp-config.php."
 
 #. translators: %s: provider name.
-#: includes/Admin/SettingsPage.php:196
+#: includes/Admin/SettingsPage.php:179
+#, php-format
+msgid "%s console"
+msgstr "console %s"
+
+#. translators: %s: provider name.
+#: includes/Admin/SettingsPage.php:197
 #, php-format
 msgid "%s model"
 msgstr "Modèle %s"
 
 #. translators: 1: model name, 2: input price, 3: output price (US dollars per million tokens).
-#: includes/Admin/SettingsPage.php:200
+#: includes/Admin/SettingsPage.php:201
 #, php-format
 msgid "%1$s — $%2$s in / $%3$s out per 1M tokens"
 msgstr "%1$s — %2$s $ en entrée / %3$s $ en sortie par million de tokens"
 
-#: includes/Admin/SettingsPage.php:202
+#: includes/Admin/SettingsPage.php:203
 msgid "recommended"
 msgstr "recommandé"
 
-#: includes/Admin/SettingsPage.php:206
+#: includes/Admin/SettingsPage.php:207
 msgid "Other model (enter its ID)…"
 msgstr "Autre modèle (saisir son identifiant)…"
 
-#: includes/Admin/SettingsPage.php:208
+#: includes/Admin/SettingsPage.php:209
 msgid "model ID"
 msgstr "identifiant du modèle"
 
-#: includes/Admin/SettingsPage.php:209
+#: includes/Admin/SettingsPage.php:210
 msgid "Load the models of my account"
 msgstr "Charger les modèles de mon compte"
 
 #. translators: %s: date.
-#: includes/Admin/SettingsPage.php:216
+#: includes/Admin/SettingsPage.php:217
 #, php-format
 msgid "Prices verified on %s. Any model of your account can be used."
 msgstr "Prix vérifiés le %s. Tous les modèles de votre compte sont utilisables."
 
-#: includes/Admin/SettingsPage.php:220
+#: includes/Admin/SettingsPage.php:221
 msgid "Reasoning effort"
 msgstr "Effort de réflexion"
 
-#: includes/Admin/SettingsPage.php:222
+#: includes/Admin/SettingsPage.php:223
 msgid "Low (recommended for translation: fast, cheaper)"
 msgstr "Faible (recommandé pour la traduction : rapide, moins cher)"
 
-#: includes/Admin/SettingsPage.php:223
+#: includes/Admin/SettingsPage.php:224
 msgid "Medium"
 msgstr "Moyen"
 
-#: includes/Admin/SettingsPage.php:224
+#: includes/Admin/SettingsPage.php:225
 msgid "High (slower, more expensive)"
 msgstr "Élevé (plus lent, plus cher)"
 
-#: includes/Admin/SettingsPage.php:229
+#: includes/Admin/SettingsPage.php:230
 msgid "Connection"
 msgstr "Connexion"
 
-#: includes/Admin/SettingsPage.php:229
+#: includes/Admin/SettingsPage.php:230
 msgid "Test with a sample sentence"
 msgstr "Tester avec une phrase d’exemple"
 
-#: includes/Admin/SettingsPage.php:229
+#: includes/Admin/SettingsPage.php:230
 msgid "Save the settings before testing."
 msgstr "Enregistrez les réglages avant de tester."
 
-#: includes/Admin/SettingsPage.php:232
+#: includes/Admin/SettingsPage.php:233
 msgid "Translation style"
 msgstr "Style de traduction"
 
-#: includes/Admin/SettingsPage.php:233
+#: includes/Admin/SettingsPage.php:234
 msgid "About your site"
 msgstr "À propos de votre site"
 
-#: includes/Admin/SettingsPage.php:233
+#: includes/Admin/SettingsPage.php:234
 msgid "Example: AI training company in Madrid for SMEs. Professional but warm tone. Target audience: business owners."
 msgstr "Exemple : organisme de formation IA à Madrid pour les PME. Ton professionnel mais chaleureux. Public : chefs d’entreprise."
 
-#: includes/Admin/SettingsPage.php:233
+#: includes/Admin/SettingsPage.php:234
 msgid "Helps the AI choose terminology and tone."
 msgstr "Aide l’IA à choisir la terminologie et le ton."
 
-#: includes/Admin/SettingsPage.php:234
+#: includes/Admin/SettingsPage.php:235
 msgid "Glossary"
 msgstr "Glossaire"
 
-#: includes/Admin/SettingsPage.php:234
+#: includes/Admin/SettingsPage.php:235
 msgid "One term per line. \"Brand\" alone: never translated. \"term = translation\": same translation in every language. \"term = es: … | de: …\": per language."
 msgstr "Un terme par ligne. « Marque » seule : jamais traduite. « terme = traduction » : même traduction dans toutes les langues. « terme = es: … | de: … » : par langue."
 
-#: includes/Admin/SettingsPage.php:235
+#: includes/Admin/SettingsPage.php:236
 msgid "Form of address"
 msgstr "Vouvoiement ou tutoiement"
 
-#: includes/Admin/SettingsPage.php:237
+#: includes/Admin/SettingsPage.php:238
 msgid "Automatic (follows the original)"
 msgstr "Automatique (suit l’original)"
 
-#: includes/Admin/SettingsPage.php:238
+#: includes/Admin/SettingsPage.php:239
 msgid "Formal (vous, usted, Sie)"
 msgstr "Formel (vous, usted, Sie)"
 
-#: includes/Admin/SettingsPage.php:239
+#: includes/Admin/SettingsPage.php:240
 msgid "Informal (tu, tú, du)"
 msgstr "Familier (tu, tú, du)"
 
-#: includes/Admin/SettingsPage.php:244
+#: includes/Admin/SettingsPage.php:245
 msgid "URLs"
 msgstr "URL"
 
-#: includes/Admin/SettingsPage.php:244
+#: includes/Admin/SettingsPage.php:245
 msgid "Translate slugs (/en/summer-cocktails/ instead of /en/cocktails-ete/)"
 msgstr "Traduire les slugs (/en/summer-cocktails/ au lieu de /en/cocktails-ete/)"
 
-#: includes/Admin/SettingsPage.php:245
+#: includes/Admin/SettingsPage.php:246
 msgid "Updates"
 msgstr "Mises à jour"
 
-#: includes/Admin/SettingsPage.php:245
+#: includes/Admin/SettingsPage.php:246
 msgid "Update translations automatically when the original changes (translations edited by hand are kept)"
 msgstr "Mettre à jour automatiquement les traductions quand l’original change (les traductions retouchées à la main sont conservées)"
 
-#: includes/Admin/SettingsPage.php:246
+#: includes/Admin/SettingsPage.php:247
 msgid "New translations"
 msgstr "Nouvelles traductions"
 
-#: includes/Admin/SettingsPage.php:248
+#: includes/Admin/SettingsPage.php:249
 msgid "Same status as the original (published if the original is)"
 msgstr "Même statut que l’original (publiée si l’original l’est)"
 
-#: includes/Admin/SettingsPage.php:249
+#: includes/Admin/SettingsPage.php:250
 msgid "Draft, to review before publishing"
 msgstr "Brouillon, à relire avant publication"
 
-#: includes/Admin/SettingsPage.php:257
+#: includes/Admin/SettingsPage.php:258
 msgid "Usage this month"
 msgstr "Consommation ce mois-ci"
 
-#: includes/Admin/SettingsPage.php:257
+#: includes/Admin/SettingsPage.php:258
 msgid "Model"
 msgstr "Modèle"
 
-#: includes/Admin/SettingsPage.php:257
+#: includes/Admin/SettingsPage.php:258
 msgid "Requests"
 msgstr "Requêtes"
 
-#: includes/Admin/SettingsPage.php:257
+#: includes/Admin/SettingsPage.php:258
 msgid "Input tokens"
 msgstr "Tokens en entrée"
 
-#: includes/Admin/SettingsPage.php:257
+#: includes/Admin/SettingsPage.php:258
 msgid "Output tokens"
 msgstr "Tokens en sortie"
 
-#: includes/Admin/SettingsPage.php:257
+#: includes/Admin/SettingsPage.php:258
 msgid "Estimated cost"
 msgstr "Coût estimé"
 
-#: includes/Admin/SettingsPage.php:274
+#: includes/Admin/SettingsPage.php:275
 msgid "SEO and GEO"
 msgstr "SEO et GEO"
 
-#: includes/Admin/SettingsPage.php:275
+#: includes/Admin/SettingsPage.php:276
 msgid "hreflang"
 msgstr "hreflang"
 
-#: includes/Admin/SettingsPage.php:275
+#: includes/Admin/SettingsPage.php:276
 msgid "Add x-default (the default language version) to the hreflang links"
 msgstr "Ajouter x-default (version dans la langue par défaut) aux liens hreflang"
 
-#: includes/Admin/SettingsPage.php:276
+#: includes/Admin/SettingsPage.php:277
 msgid "Structured data"
 msgstr "Données structurées"
 
-#: includes/Admin/SettingsPage.php:276
+#: includes/Admin/SettingsPage.php:277
 msgid "Language and translation links in the schema.org graph (Yoast SEO, Rank Math, or a minimal graph without SEO plugin)"
 msgstr "Langue et liens entre traductions dans le graphe schema.org (Yoast SEO, Rank Math, ou un graphe minimal sans extension SEO)"
 
-#: includes/Admin/SettingsPage.php:278
+#: includes/Admin/SettingsPage.php:279
 msgid "Publish an llms.txt per language for AI assistants"
 msgstr "Publier un llms.txt par langue pour les assistants IA"
 
-#: includes/Admin/SettingsPage.php:279
+#: includes/Admin/SettingsPage.php:280
 msgid "Internal links"
 msgstr "Liens internes"
 
-#: includes/Admin/SettingsPage.php:279
+#: includes/Admin/SettingsPage.php:280
 msgid "Point the links of translated content to the translated pages"
 msgstr "Faire pointer les liens des contenus traduits vers les pages traduites"
 
-#: includes/Admin/SettingsPage.php:280
+#: includes/Admin/SettingsPage.php:281
 #: includes/Frontend/Strings.php:91
 msgid "Menus"
 msgstr "Menus"
 
-#: includes/Admin/SettingsPage.php:280
+#: includes/Admin/SettingsPage.php:281
 msgid "Hide menu items whose page is not translated (no mixed languages)"
 msgstr "Masquer les éléments de menu dont la page n’est pas traduite (pas de mélange de langues)"
 
-#: includes/Admin/SettingsPage.php:283
+#: includes/Admin/SettingsPage.php:284
 #: includes/Frontend/Switcher.php:153
 #: assets/js/switcher-block.js:20
 #: assets/js/switcher-block.js:40
 msgid "Language switcher"
 msgstr "Sélecteur de langue"
 
-#: includes/Admin/SettingsPage.php:285
+#: includes/Admin/SettingsPage.php:286
 msgid "Add it anywhere with the <strong>Language switcher</strong> block, the shortcode <code>[gaiml_switcher]</code> (Elementor, Divi: shortcode or text module) or <code>gaiml_language_switcher()</code> in a theme."
 msgstr "Ajoutez-le n’importe où avec le bloc <strong>Sélecteur de langue</strong>, le shortcode <code>[gaiml_switcher]</code> (Elementor, Divi : module shortcode ou texte) ou <code>gaiml_language_switcher()</code> dans un thème."
 
-#: includes/Admin/SettingsPage.php:291
+#: includes/Admin/SettingsPage.php:292
 msgid "Add to a menu"
 msgstr "Ajouter à un menu"
 
-#: includes/Admin/SettingsPage.php:291
+#: includes/Admin/SettingsPage.php:292
 msgid "No"
 msgstr "Non"
 
-#: includes/Admin/SettingsPage.php:296
+#: includes/Admin/SettingsPage.php:297
 #: assets/js/switcher-block.js:42
 msgid "Style"
 msgstr "Style"
 
-#: includes/Admin/SettingsPage.php:298
+#: includes/Admin/SettingsPage.php:299
 #: assets/js/switcher-block.js:45
 msgid "Dropdown"
 msgstr "Liste déroulante"
 
-#: includes/Admin/SettingsPage.php:299
+#: includes/Admin/SettingsPage.php:300
 #: assets/js/switcher-block.js:46
 msgid "List"
 msgstr "Liste"
 
-#: includes/Admin/SettingsPage.php:304
+#: includes/Admin/SettingsPage.php:305
 #: assets/js/switcher-block.js:51
 msgid "Show"
 msgstr "Afficher"
 
-#: includes/Admin/SettingsPage.php:306
+#: includes/Admin/SettingsPage.php:307
 msgid "Language name (Français, English)"
 msgstr "Nom de la langue (Français, English)"
 
-#: includes/Admin/SettingsPage.php:307
+#: includes/Admin/SettingsPage.php:308
 msgid "Code (FR, EN)"
 msgstr "Code (FR, EN)"
 
-#: includes/Admin/SettingsPage.php:308
+#: includes/Admin/SettingsPage.php:309
 #: assets/js/switcher-block.js:56
 msgid "Code and name"
 msgstr "Code et nom"
 
-#: includes/Admin/SettingsPage.php:312
+#: includes/Admin/SettingsPage.php:313
 msgid "Flags are not offered on purpose: a flag is a country, not a language."
 msgstr "Pas de drapeaux, volontairement : un drapeau représente un pays, pas une langue."
 
-#: includes/Admin/SettingsPage.php:315
+#: includes/Admin/SettingsPage.php:316
 msgid "Uninstall"
 msgstr "Désinstallation"
 
-#: includes/Admin/SettingsPage.php:316
+#: includes/Admin/SettingsPage.php:317
 msgid "Data"
 msgstr "Données"
 
-#: includes/Admin/SettingsPage.php:316
+#: includes/Admin/SettingsPage.php:317
 msgid "Delete the settings, language links and translation memory when the plugin is deleted (translated pages are kept)"
 msgstr "Supprimer les réglages, les liens entre langues et la mémoire de traduction à la suppression de l’extension (les pages traduites sont conservées)"
 
 #. translators: %s: locale.
-#: includes/Admin/SettingsPage.php:463
+#: includes/Admin/SettingsPage.php:464
 #, php-format
 msgid "WordPress translations for %s could not be downloaded: themes and plugins will show their texts in English in that language until you install them (Dashboard > Updates)."
 msgstr "Les traductions WordPress pour %s n’ont pas pu être téléchargées : thèmes et extensions afficheront leurs textes en anglais dans cette langue tant qu’elles ne sont pas installées (Tableau de bord > Mises à jour)."
 
-#: includes/Admin/SettingsPage.php:483
-#: includes/Admin/SettingsPage.php:556
+#: includes/Admin/SettingsPage.php:484
+#: includes/Admin/SettingsPage.php:557
 msgid "Add at least one language first."
 msgstr "Ajoutez d’abord au moins une langue."
 
-#: includes/Admin/SettingsPage.php:487
+#: includes/Admin/SettingsPage.php:488
 msgid "Translates every original that has no translation yet. The work runs in the background: you can leave this page, it continues every minute (WP-Cron) until it is done."
 msgstr "Traduit chaque original qui n’a pas encore de traduction. Le travail tourne en arrière-plan : vous pouvez quitter cette page, il continue chaque minute (WP-Cron) jusqu’à la fin."
 
-#: includes/Admin/SettingsPage.php:507
+#: includes/Admin/SettingsPage.php:508
 msgid "Into"
 msgstr "Vers"
 
-#: includes/Admin/SettingsPage.php:520
+#: includes/Admin/SettingsPage.php:521
 msgid "Site title, tagline and menus"
 msgstr "Titre du site, slogan et menus"
 
-#: includes/Admin/SettingsPage.php:521
+#: includes/Admin/SettingsPage.php:522
 msgid "Also update translations whose original changed"
 msgstr "Mettre aussi à jour les traductions dont l’original a changé"
 
-#: includes/Admin/SettingsPage.php:523
+#: includes/Admin/SettingsPage.php:524
 msgid "Estimate the cost"
 msgstr "Estimer le coût"
 
-#: includes/Admin/SettingsPage.php:523
+#: includes/Admin/SettingsPage.php:524
 msgid "Start the translation"
 msgstr "Lancer la traduction"
 
-#: includes/Admin/SettingsPage.php:523
+#: includes/Admin/SettingsPage.php:524
 msgid "Pause"
 msgstr "Pause"
 
-#: includes/Admin/SettingsPage.php:528
+#: includes/Admin/SettingsPage.php:529
 msgid "Queue"
 msgstr "File d’attente"
 
 #. translators: 1: waiting jobs, 2: failed jobs.
-#: includes/Admin/SettingsPage.php:530
+#: includes/Admin/SettingsPage.php:531
 #, php-format
 msgid "%1$d waiting, %2$d failed."
 msgstr "%1$d en attente, %2$d en échec."
 
-#: includes/Admin/SettingsPage.php:531
+#: includes/Admin/SettingsPage.php:532
 msgid "Retry failed translations"
 msgstr "Relancer les traductions en échec"
 
-#: includes/Admin/SettingsPage.php:531
+#: includes/Admin/SettingsPage.php:532
 msgid "Empty the queue"
 msgstr "Vider la file d’attente"
 
-#: includes/Admin/SettingsPage.php:534
+#: includes/Admin/SettingsPage.php:535
 msgid "Reason"
 msgstr "Raison"
 
-#: includes/Admin/SettingsPage.php:536
+#: includes/Admin/SettingsPage.php:537
 msgid "Site strings"
 msgstr "Chaînes du site"
 
-#: includes/Admin/SettingsPage.php:559
+#: includes/Admin/SettingsPage.php:560
 msgid "Site title, tagline and custom menu labels. Translated texts of pages are edited directly in the translated pages."
 msgstr "Titre du site, slogan et libellés de menu personnalisés. Les textes traduits des pages se modifient directement dans les pages traduites."
 
-#: includes/Admin/SettingsPage.php:560
+#: includes/Admin/SettingsPage.php:561
 msgid "Translate missing strings with AI"
 msgstr "Traduire les chaînes manquantes avec l’IA"
 
-#: includes/Admin/SettingsPage.php:591
+#: includes/Admin/SettingsPage.php:592
 msgid "Save the strings"
 msgstr "Enregistrer les chaînes"
 

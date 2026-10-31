@@ -293,10 +293,14 @@
 			setText( estimateResult, t.loading );
 			post( 'estimate', params() )
 				.then( function ( data ) {
-					setText(
-						estimateResult,
-						data.contents + ' contents, ' + data.jobs + ' translations, ~' + Math.round( data.chars / 1000 ) + 'k characters' + ( null !== data.cost ? ' ≈ $' + data.cost + ' (' + data.model + ')' : '' )
-					);
+					var text = String( t.estimate )
+						.replace( '%1$s', data.contents )
+						.replace( '%2$s', data.jobs )
+						.replace( '%3$s', Math.round( data.chars / 1000 ) );
+					if ( null !== data.cost ) {
+						text += ' ' + String( t.cost ).replace( '%1$s', data.cost ).replace( '%2$s', data.model );
+					}
+					setText( estimateResult, text );
 				} )
 				.catch( function ( error ) {
 					setText( estimateResult, t.error + ': ' + error.message );
