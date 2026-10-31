@@ -1,0 +1,36 @@
+/* GustinAI Multilingual – admin */
+.gaiml-langs { margin: 0 0 .5em; }
+.gaiml-lang { display: flex; flex-wrap: wrap; align-items: center; gap: .3em .5em; padding: .45em 0; border-bottom: 1px solid #f0f0f1; }
+.gaiml-lang__name { font-weight: 600; min-width: 6.5em; }
+.gaiml-lang__actions { margin-left: auto; display: inline-flex; gap: .6em; align-items: center; }
+.gaiml-lang__actions .button-link { color: #2271b1; text-decoration: underline; }
+.gaiml-manual { text-decoration: none; font-weight: 600; }
+.gaiml-error { flex-basis: 100%; color: #b32d2e; font-size: 12px; }
+.gaiml-status { display: inline-block; padding: 0 .5em; border-radius: 9px; font-size: 11px; line-height: 18px; background: #f0f0f1; color: #50575e; }
+.gaiml-status--translated, .gaiml-status--source { background: #edfaef; color: #00701d; }
+.gaiml-status--outdated, .gaiml-status--edited, .gaiml-status--manual { background: #fcf9e8; color: #8a6100; }
+.gaiml-status--queued { background: #f0f6fc; color: #135e96; }
+.gaiml-status--failed { background: #fcf0f1; color: #b32d2e; }
+.gaiml-progress { margin: .4em 0 0; color: #50575e; font-style: italic; min-height: 1.2em; }
+.gaiml-flags { display: flex; flex-wrap: wrap; gap: 4px; }
+.gaiml-flag { display: inline-block; min-width: 26px; padding: 1px 5px; border: 1px solid #c3c4c7; border-radius: 4px; background: #fff; color: #50575e; font-size: 11px; font-weight: 600; line-height: 18px; text-align: center; text-decoration: none; cursor: default; }
+a.gaiml-flag, button.gaiml-flag { cursor: pointer; }
+.gaiml-flag.is-current { background: #1d2327; border-color: #1d2327; color: #fff; }
+.gaiml-flag.gaiml-status--translated { border-color: #00a32a; color: #00701d; background: #edfaef; }
+.gaiml-flag.gaiml-status--outdated, .gaiml-flag.gaiml-status--edited, .gaiml-flag.gaiml-status--manual { border-color: #dba617; color: #8a6100; background: #fcf9e8; }
+.gaiml-flag.gaiml-status--missing { border-style: dashed; }
+.gaiml-flag.gaiml-status--failed { border-color: #d63638; color: #b32d2e; }
+.gaiml-flag.gaiml-status--queued { border-color: #72aee6; color: #135e96; }
+.column-gaiml { width: 12em; }
+.gaiml-languages input[type="text"] { font-family: monospace; }
+.gaiml-add { min-width: 22em; }
+.gaiml-model-select { max-width: 100%; min-width: 34em; }
+.gaiml-model-notes { margin: .6em 0 0; color: #50575e; }
+.gaiml-model-notes li { margin: 0 0 .2em; }
+.gaiml-test-result { margin-left: .5em; }
+.gaiml-bar { height: 10px; max-width: 520px; background: #f0f0f1; border-radius: 5px; overflow: hidden; }
+.gaiml-bar__fill { width: 0; height: 100%; background: #2271b1; transition: width .4s; }
+.gaiml-log { max-height: 220px; overflow: auto; font-size: 12px; color: #50575e; }
+.gaiml-coverage { max-width: 760px; margin-bottom: 1.5em; }
+.gaiml-strings td:first-child { width: 30%; }
+.gaiml-strings__group th { background: #f6f7f7; font-weight: 600; }

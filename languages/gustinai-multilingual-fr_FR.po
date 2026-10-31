@@ -1,0 +1,898 @@
+# Copyright (C) 2026 Thierry Gustin
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: GustinAI Multilingual 1.0.0\n"
+"Report-Msgid-Bugs-To: https://gustinai.com\n"
+"Last-Translator: Thierry Gustin\n"
+"Language-Team: GustinAI\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-10-31T07:29:38+00:00\n"
+"PO-Revision-Date: 2026-10-31 07:29+0000\n"
+"Language: fr_FR\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: gustinai-multilingual\n"
+
+#. Plugin Name of the plugin
+#: gustinai-multilingual.php
+msgid "GustinAI Multilingual"
+msgstr "GustinAI Multilingual"
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: gustinai-multilingual.php
+msgid "https://gustinai.com"
+msgstr "https://gustinai.com"
+
+#. Description of the plugin
+#: gustinai-multilingual.php
+msgid "Turn any WordPress site into a fast, SEO & GEO-ready multilingual site. AI translation with Claude or ChatGPT, translated slugs, categories and menus, hreflang, llms.txt. Works with Gutenberg, Elementor and Divi."
+msgstr "Transformez n’importe quel site WordPress en site multilingue rapide, optimisé SEO et GEO. Traduction par IA avec Claude ou ChatGPT, slugs, catégories et menus traduits, hreflang, llms.txt. Compatible Gutenberg, Elementor et Divi."
+
+#. Author of the plugin
+#: gustinai-multilingual.php
+msgid "Thierry Gustin"
+msgstr "Thierry Gustin"
+
+#. translators: 1: required PHP version, 2: current PHP version.
+#: gustinai-multilingual.php:39
+#, php-format
+msgid "GustinAI Multilingual requires PHP %1$s or newer. Your server runs PHP %2$s."
+msgstr "GustinAI Multilingual nécessite PHP %1$s ou plus récent. Votre serveur utilise PHP %2$s."
+
+#: includes/Admin/Admin.php:28
+#: includes/Admin/Admin.php:29
+#: includes/Admin/SettingsPage.php:71
+msgid "Multilingual"
+msgstr "Multilingue"
+
+#: includes/Admin/Admin.php:36
+msgid "Multilingual settings"
+msgstr "Réglages multilingues"
+
+#: includes/Admin/Admin.php:36
+#: includes/Admin/Admin.php:121
+msgid "Settings"
+msgstr "Réglages"
+
+#: includes/Admin/Admin.php:37
+#: includes/Admin/SettingsPage.php:481
+msgid "Bulk translation"
+msgstr "Traduction en masse"
+
+#: includes/Admin/Admin.php:38
+#: includes/Admin/SettingsPage.php:552
+msgid "Strings"
+msgstr "Chaînes"
+
+#: includes/Admin/Admin.php:62
+msgid "Queued…"
+msgstr "En file d’attente…"
+
+#: includes/Admin/Admin.php:63
+msgid "Translating…"
+msgstr "Traduction en cours…"
+
+#: includes/Admin/Admin.php:64
+msgid "Done"
+msgstr "Terminé"
+
+#: includes/Admin/Admin.php:65
+#: includes/Admin/Admin.php:134
+msgid "Failed"
+msgstr "Échec"
+
+#: includes/Admin/Admin.php:66
+msgid "Error"
+msgstr "Erreur"
+
+#. translators: %d: number of translations waiting.
+#: includes/Admin/Admin.php:68
+#, php-format
+msgid "%d translation(s) waiting"
+msgstr "%d traduction(s) en attente"
+
+#: includes/Admin/Admin.php:69
+msgid "All translations are done."
+msgstr "Toutes les traductions sont terminées."
+
+#: includes/Admin/Admin.php:70
+msgid "This translation was edited by hand. Overwrite it with a new AI translation?"
+msgstr "Cette traduction a été modifiée à la main. La remplacer par une nouvelle traduction IA ?"
+
+#: includes/Admin/Admin.php:71
+msgid "Loading…"
+msgstr "Chargement…"
+
+#: includes/Admin/Admin.php:72
+msgid "Paused. The remaining translations continue in the background."
+msgstr "En pause. Les traductions restantes continuent en arrière-plan."
+
+#: includes/Admin/Admin.php:89
+msgid "Add a second language and an API key to translate your site."
+msgstr "Ajoutez une deuxième langue et une clé API pour traduire votre site."
+
+#: includes/Admin/Admin.php:91
+msgid "Set up languages"
+msgstr "Configurer les langues"
+
+#: includes/Admin/Admin.php:99
+msgid "No API key: AI translation is disabled."
+msgstr "Pas de clé API : la traduction par IA est désactivée."
+
+#: includes/Admin/Admin.php:101
+msgid "Add a Claude or OpenAI key"
+msgstr "Ajouter une clé Claude ou OpenAI"
+
+#. translators: %d: number of failed translations.
+#: includes/Admin/Admin.php:109
+#, php-format
+msgid "%d translation failed."
+msgid_plural "%d translations failed."
+msgstr[0] "%d traduction a échoué."
+msgstr[1] "%d traductions ont échoué."
+
+#: includes/Admin/Admin.php:111
+msgid "See why"
+msgstr "Voir pourquoi"
+
+#: includes/Admin/Admin.php:132
+msgid "Not translated"
+msgstr "Non traduit"
+
+#: includes/Admin/Admin.php:133
+msgid "In progress"
+msgstr "En cours"
+
+#: includes/Admin/Admin.php:135
+msgid "Up to date"
+msgstr "À jour"
+
+#: includes/Admin/Admin.php:136
+msgid "Original changed"
+msgstr "Original modifié"
+
+#: includes/Admin/Admin.php:137
+msgid "Edited by hand"
+msgstr "Modifié à la main"
+
+#: includes/Admin/Admin.php:138
+msgid "Manual translation"
+msgstr "Traduction manuelle"
+
+#: includes/Admin/Admin.php:139
+msgid "Original"
+msgstr "Original"
+
+#: includes/Admin/AdminBar.php:39
+#: includes/Admin/ListColumns.php:58
+#: includes/Admin/ListColumns.php:62
+#: includes/Admin/MetaBox.php:36
+#: includes/Admin/SettingsPage.php:48
+msgid "Languages"
+msgstr "Langues"
+
+#. translators: %s: language name.
+#: includes/Admin/AdminBar.php:65
+#, php-format
+msgid "Edit (%s)"
+msgstr "Modifier (%s)"
+
+#. translators: %s: language name.
+#: includes/Admin/AdminBar.php:75
+#: includes/Admin/ListColumns.php:118
+#: includes/Admin/ListColumns.php:151
+#, php-format
+msgid "Translate into %s with AI"
+msgstr "Traduire en %s avec l’IA"
+
+#: includes/Admin/Ajax.php:36
+#: includes/Admin/SettingsPage.php:336
+#: includes/Admin/SettingsPage.php:597
+msgid "You are not allowed to do this."
+msgstr "Vous n’avez pas l’autorisation de faire cela."
+
+#: includes/Admin/Ajax.php:78
+#: includes/Admin/Ajax.php:333
+msgid "You are not allowed to translate this content."
+msgstr "Vous n’avez pas l’autorisation de traduire ce contenu."
+
+#: includes/Admin/Ajax.php:135
+msgid "Enter an API key first."
+msgstr "Saisissez d’abord une clé API."
+
+#: includes/Admin/Ajax.php:159
+msgid "Save an API key first."
+msgstr "Enregistrez d’abord une clé API."
+
+#: includes/Admin/Ajax.php:164
+msgid "Add a second language first."
+msgstr "Ajoutez d’abord une deuxième langue."
+
+#: includes/Admin/ListColumns.php:163
+msgid "Filter by language"
+msgstr "Filtrer par langue"
+
+#: includes/Admin/ListColumns.php:164
+msgid "All languages"
+msgstr "Toutes les langues"
+
+#: includes/Admin/ListColumns.php:176
+msgid "Translate with AI (all languages)"
+msgstr "Traduire avec l’IA (toutes les langues)"
+
+#: includes/Admin/ListColumns.php:177
+msgid "Update AI translations"
+msgstr "Mettre à jour les traductions IA"
+
+#. translators: %d: number of translations.
+#: includes/Admin/ListColumns.php:217
+#, php-format
+msgid "%d translation queued."
+msgid_plural "%d translations queued."
+msgstr[0] "%d traduction mise en file d’attente."
+msgstr[1] "%d traductions mises en file d’attente."
+
+#: includes/Admin/MetaBox.php:47
+msgid "Language of this content"
+msgstr "Langue de ce contenu"
+
+#: includes/Admin/MetaBox.php:60
+msgid "Add languages in Multilingual > Settings."
+msgstr "Ajoutez des langues dans Multilingue > Réglages."
+
+#: includes/Admin/MetaBox.php:64
+msgid "Save the content first, then translate it here."
+msgstr "Enregistrez d’abord le contenu, puis traduisez-le ici."
+
+#: includes/Admin/MetaBox.php:71
+msgid "Translation of"
+msgstr "Traduction de"
+
+#: includes/Admin/MetaBox.php:92
+msgid "Edit"
+msgstr "Modifier"
+
+#: includes/Admin/MetaBox.php:94
+msgid "View"
+msgstr "Voir"
+
+#: includes/Admin/MetaBox.php:99
+msgid "Update"
+msgstr "Mettre à jour"
+
+#: includes/Admin/MetaBox.php:99
+msgid "Translate"
+msgstr "Traduire"
+
+#: includes/Admin/MetaBox.php:113
+msgid "Write this translation by hand"
+msgstr "Écrire cette traduction à la main"
+
+#: includes/Admin/MetaBox.php:129
+msgid "Translate into all languages"
+msgstr "Traduire dans toutes les langues"
+
+#. translators: 1: estimated cost in US dollars, 2: model name.
+#: includes/Admin/MetaBox.php:140
+#, php-format
+msgid "Estimated cost: about $%1$s per language with %2$s."
+msgstr "Coût estimé : environ %1$s $ par langue avec %2$s."
+
+#: includes/Admin/SettingsPage.php:37
+msgid "Settings saved."
+msgstr "Réglages enregistrés."
+
+#: includes/Admin/SettingsPage.php:49
+msgid "AI translation"
+msgstr "Traduction IA"
+
+#: includes/Admin/SettingsPage.php:50
+msgid "SEO, GEO & display"
+msgstr "SEO, GEO et affichage"
+
+#: includes/Admin/SettingsPage.php:89
+msgid "Site languages"
+msgstr "Langues du site"
+
+#: includes/Admin/SettingsPage.php:90
+msgid "The default language is the language of your existing content. Each other language gets its own URLs: /en/, /es/…"
+msgstr "La langue par défaut est celle de vos contenus existants. Chaque autre langue a ses propres URL : /en/, /es/…"
+
+#: includes/Admin/SettingsPage.php:91
+msgid "Default"
+msgstr "Par défaut"
+
+#: includes/Admin/SettingsPage.php:91
+#: includes/Admin/SettingsPage.php:534
+#: includes/Admin/TermFields.php:34
+#: includes/Admin/TermFields.php:51
+#: includes/Frontend/Switcher.php:62
+msgid "Language"
+msgstr "Langue"
+
+#: includes/Admin/SettingsPage.php:91
+msgid "URL prefix"
+msgstr "Préfixe d’URL"
+
+#: includes/Admin/SettingsPage.php:91
+msgid "WordPress locale"
+msgstr "Locale WordPress"
+
+#: includes/Admin/SettingsPage.php:91
+#: includes/Admin/SettingsPage.php:488
+#: includes/Admin/SettingsPage.php:513
+#: includes/Admin/SettingsPage.php:534
+msgid "Content"
+msgstr "Contenu"
+
+#: includes/Admin/SettingsPage.php:91
+#: includes/Admin/SettingsPage.php:105
+msgid "Remove"
+msgstr "Retirer"
+
+#: includes/Admin/SettingsPage.php:100
+msgid "Default language"
+msgstr "Langue par défaut"
+
+#: includes/Admin/SettingsPage.php:109
+msgid "Add languages:"
+msgstr "Ajouter des langues :"
+
+#: includes/Admin/SettingsPage.php:115
+msgid "Ctrl/Cmd + click to select several. WordPress translations of each new language are downloaded automatically when possible."
+msgstr "Ctrl/Cmd + clic pour en sélectionner plusieurs. Les traductions WordPress de chaque nouvelle langue sont téléchargées automatiquement quand c’est possible."
+
+#: includes/Admin/SettingsPage.php:118
+msgid "URLs of the default language"
+msgstr "URL de la langue par défaut"
+
+#: includes/Admin/SettingsPage.php:118
+msgid "No prefix for the default language (recommended: your current URLs do not change)"
+msgstr "Pas de préfixe pour la langue par défaut (recommandé : vos URL actuelles ne changent pas)"
+
+#: includes/Admin/SettingsPage.php:120
+msgid "Translated content"
+msgstr "Contenus traduits"
+
+#: includes/Admin/SettingsPage.php:133
+msgid "Translated taxonomies"
+msgstr "Taxonomies traduites"
+
+#: includes/Admin/SettingsPage.php:147
+msgid "AI provider"
+msgstr "Fournisseur d’IA"
+
+#: includes/Admin/SettingsPage.php:148
+msgid "Translate with"
+msgstr "Traduire avec"
+
+#: includes/Admin/SettingsPage.php:150
+msgid "Claude (Anthropic)"
+msgstr "Claude (Anthropic)"
+
+#: includes/Admin/SettingsPage.php:151
+msgid "ChatGPT models (OpenAI)"
+msgstr "Modèles ChatGPT (OpenAI)"
+
+#. translators: %s: provider name.
+#: includes/Admin/SettingsPage.php:162
+#, php-format
+msgid "%s API key"
+msgstr "Clé API %s"
+
+#. translators: %s: constant name.
+#: includes/Admin/SettingsPage.php:164
+#, php-format
+msgid "Defined in wp-config.php (%s)."
+msgstr "Définie dans wp-config.php (%s)."
+
+#: includes/Admin/SettingsPage.php:169
+msgid "Paste your key"
+msgstr "Collez votre clé"
+
+#: includes/Admin/SettingsPage.php:172
+msgid "Delete the saved key"
+msgstr "Supprimer la clé enregistrée"
+
+#. translators: 1: link to the provider console, 2: constant name.
+#: includes/Admin/SettingsPage.php:177
+#, php-format
+msgid "Get a key in the %1$s. Stored encrypted. Even safer: define %2$s in wp-config.php."
+msgstr "Obtenez une clé dans la %1$s. Stockée chiffrée. Encore plus sûr : définissez %2$s dans wp-config.php."
+
+#. translators: %s: provider name.
+#: includes/Admin/SettingsPage.php:196
+#, php-format
+msgid "%s model"
+msgstr "Modèle %s"
+
+#. translators: 1: model name, 2: input price, 3: output price (US dollars per million tokens).
+#: includes/Admin/SettingsPage.php:200
+#, php-format
+msgid "%1$s — $%2$s in / $%3$s out per 1M tokens"
+msgstr "%1$s — %2$s $ en entrée / %3$s $ en sortie par million de tokens"
+
+#: includes/Admin/SettingsPage.php:202
+msgid "recommended"
+msgstr "recommandé"
+
+#: includes/Admin/SettingsPage.php:206
+msgid "Other model (enter its ID)…"
+msgstr "Autre modèle (saisir son identifiant)…"
+
+#: includes/Admin/SettingsPage.php:208
+msgid "model ID"
+msgstr "identifiant du modèle"
+
+#: includes/Admin/SettingsPage.php:209
+msgid "Load the models of my account"
+msgstr "Charger les modèles de mon compte"
+
+#. translators: %s: date.
+#: includes/Admin/SettingsPage.php:216
+#, php-format
+msgid "Prices verified on %s. Any model of your account can be used."
+msgstr "Prix vérifiés le %s. Tous les modèles de votre compte sont utilisables."
+
+#: includes/Admin/SettingsPage.php:220
+msgid "Reasoning effort"
+msgstr "Effort de réflexion"
+
+#: includes/Admin/SettingsPage.php:222
+msgid "Low (recommended for translation: fast, cheaper)"
+msgstr "Faible (recommandé pour la traduction : rapide, moins cher)"
+
+#: includes/Admin/SettingsPage.php:223
+msgid "Medium"
+msgstr "Moyen"
+
+#: includes/Admin/SettingsPage.php:224
+msgid "High (slower, more expensive)"
+msgstr "Élevé (plus lent, plus cher)"
+
+#: includes/Admin/SettingsPage.php:229
+msgid "Connection"
+msgstr "Connexion"
+
+#: includes/Admin/SettingsPage.php:229
+msgid "Test with a sample sentence"
+msgstr "Tester avec une phrase d’exemple"
+
+#: includes/Admin/SettingsPage.php:229
+msgid "Save the settings before testing."
+msgstr "Enregistrez les réglages avant de tester."
+
+#: includes/Admin/SettingsPage.php:232
+msgid "Translation style"
+msgstr "Style de traduction"
+
+#: includes/Admin/SettingsPage.php:233
+msgid "About your site"
+msgstr "À propos de votre site"
+
+#: includes/Admin/SettingsPage.php:233
+msgid "Example: AI training company in Madrid for SMEs. Professional but warm tone. Target audience: business owners."
+msgstr "Exemple : organisme de formation IA à Madrid pour les PME. Ton professionnel mais chaleureux. Public : chefs d’entreprise."
+
+#: includes/Admin/SettingsPage.php:233
+msgid "Helps the AI choose terminology and tone."
+msgstr "Aide l’IA à choisir la terminologie et le ton."
+
+#: includes/Admin/SettingsPage.php:234
+msgid "Glossary"
+msgstr "Glossaire"
+
+#: includes/Admin/SettingsPage.php:234
+msgid "One term per line. \"Brand\" alone: never translated. \"term = translation\": same translation in every language. \"term = es: … | de: …\": per language."
+msgstr "Un terme par ligne. « Marque » seule : jamais traduite. « terme = traduction » : même traduction dans toutes les langues. « terme = es: … | de: … » : par langue."
+
+#: includes/Admin/SettingsPage.php:235
+msgid "Form of address"
+msgstr "Vouvoiement ou tutoiement"
+
+#: includes/Admin/SettingsPage.php:237
+msgid "Automatic (follows the original)"
+msgstr "Automatique (suit l’original)"
+
+#: includes/Admin/SettingsPage.php:238
+msgid "Formal (vous, usted, Sie)"
+msgstr "Formel (vous, usted, Sie)"
+
+#: includes/Admin/SettingsPage.php:239
+msgid "Informal (tu, tú, du)"
+msgstr "Familier (tu, tú, du)"
+
+#: includes/Admin/SettingsPage.php:244
+msgid "URLs"
+msgstr "URL"
+
+#: includes/Admin/SettingsPage.php:244
+msgid "Translate slugs (/en/summer-cocktails/ instead of /en/cocktails-ete/)"
+msgstr "Traduire les slugs (/en/summer-cocktails/ au lieu de /en/cocktails-ete/)"
+
+#: includes/Admin/SettingsPage.php:245
+msgid "Updates"
+msgstr "Mises à jour"
+
+#: includes/Admin/SettingsPage.php:245
+msgid "Update translations automatically when the original changes (translations edited by hand are kept)"
+msgstr "Mettre à jour automatiquement les traductions quand l’original change (les traductions retouchées à la main sont conservées)"
+
+#: includes/Admin/SettingsPage.php:246
+msgid "New translations"
+msgstr "Nouvelles traductions"
+
+#: includes/Admin/SettingsPage.php:248
+msgid "Same status as the original (published if the original is)"
+msgstr "Même statut que l’original (publiée si l’original l’est)"
+
+#: includes/Admin/SettingsPage.php:249
+msgid "Draft, to review before publishing"
+msgstr "Brouillon, à relire avant publication"
+
+#: includes/Admin/SettingsPage.php:257
+msgid "Usage this month"
+msgstr "Consommation ce mois-ci"
+
+#: includes/Admin/SettingsPage.php:257
+msgid "Model"
+msgstr "Modèle"
+
+#: includes/Admin/SettingsPage.php:257
+msgid "Requests"
+msgstr "Requêtes"
+
+#: includes/Admin/SettingsPage.php:257
+msgid "Input tokens"
+msgstr "Tokens en entrée"
+
+#: includes/Admin/SettingsPage.php:257
+msgid "Output tokens"
+msgstr "Tokens en sortie"
+
+#: includes/Admin/SettingsPage.php:257
+msgid "Estimated cost"
+msgstr "Coût estimé"
+
+#: includes/Admin/SettingsPage.php:274
+msgid "SEO and GEO"
+msgstr "SEO et GEO"
+
+#: includes/Admin/SettingsPage.php:275
+msgid "hreflang"
+msgstr "hreflang"
+
+#: includes/Admin/SettingsPage.php:275
+msgid "Add x-default (the default language version) to the hreflang links"
+msgstr "Ajouter x-default (version dans la langue par défaut) aux liens hreflang"
+
+#: includes/Admin/SettingsPage.php:276
+msgid "Structured data"
+msgstr "Données structurées"
+
+#: includes/Admin/SettingsPage.php:276
+msgid "Language and translation links in the schema.org graph (Yoast SEO, Rank Math, or a minimal graph without SEO plugin)"
+msgstr "Langue et liens entre traductions dans le graphe schema.org (Yoast SEO, Rank Math, ou un graphe minimal sans extension SEO)"
+
+#: includes/Admin/SettingsPage.php:278
+msgid "Publish an llms.txt per language for AI assistants"
+msgstr "Publier un llms.txt par langue pour les assistants IA"
+
+#: includes/Admin/SettingsPage.php:279
+msgid "Internal links"
+msgstr "Liens internes"
+
+#: includes/Admin/SettingsPage.php:279
+msgid "Point the links of translated content to the translated pages"
+msgstr "Faire pointer les liens des contenus traduits vers les pages traduites"
+
+#: includes/Admin/SettingsPage.php:280
+#: includes/Frontend/Strings.php:91
+msgid "Menus"
+msgstr "Menus"
+
+#: includes/Admin/SettingsPage.php:280
+msgid "Hide menu items whose page is not translated (no mixed languages)"
+msgstr "Masquer les éléments de menu dont la page n’est pas traduite (pas de mélange de langues)"
+
+#: includes/Admin/SettingsPage.php:283
+#: includes/Frontend/Switcher.php:153
+#: assets/js/switcher-block.js:20
+#: assets/js/switcher-block.js:40
+msgid "Language switcher"
+msgstr "Sélecteur de langue"
+
+#: includes/Admin/SettingsPage.php:285
+msgid "Add it anywhere with the <strong>Language switcher</strong> block, the shortcode <code>[gaiml_switcher]</code> (Elementor, Divi: shortcode or text module) or <code>gaiml_language_switcher()</code> in a theme."
+msgstr "Ajoutez-le n’importe où avec le bloc <strong>Sélecteur de langue</strong>, le shortcode <code>[gaiml_switcher]</code> (Elementor, Divi : module shortcode ou texte) ou <code>gaiml_language_switcher()</code> dans un thème."
+
+#: includes/Admin/SettingsPage.php:291
+msgid "Add to a menu"
+msgstr "Ajouter à un menu"
+
+#: includes/Admin/SettingsPage.php:291
+msgid "No"
+msgstr "Non"
+
+#: includes/Admin/SettingsPage.php:296
+#: assets/js/switcher-block.js:42
+msgid "Style"
+msgstr "Style"
+
+#: includes/Admin/SettingsPage.php:298
+#: assets/js/switcher-block.js:45
+msgid "Dropdown"
+msgstr "Liste déroulante"
+
+#: includes/Admin/SettingsPage.php:299
+#: assets/js/switcher-block.js:46
+msgid "List"
+msgstr "Liste"
+
+#: includes/Admin/SettingsPage.php:304
+#: assets/js/switcher-block.js:51
+msgid "Show"
+msgstr "Afficher"
+
+#: includes/Admin/SettingsPage.php:306
+msgid "Language name (Français, English)"
+msgstr "Nom de la langue (Français, English)"
+
+#: includes/Admin/SettingsPage.php:307
+msgid "Code (FR, EN)"
+msgstr "Code (FR, EN)"
+
+#: includes/Admin/SettingsPage.php:308
+#: assets/js/switcher-block.js:56
+msgid "Code and name"
+msgstr "Code et nom"
+
+#: includes/Admin/SettingsPage.php:312
+msgid "Flags are not offered on purpose: a flag is a country, not a language."
+msgstr "Pas de drapeaux, volontairement : un drapeau représente un pays, pas une langue."
+
+#: includes/Admin/SettingsPage.php:315
+msgid "Uninstall"
+msgstr "Désinstallation"
+
+#: includes/Admin/SettingsPage.php:316
+msgid "Data"
+msgstr "Données"
+
+#: includes/Admin/SettingsPage.php:316
+msgid "Delete the settings, language links and translation memory when the plugin is deleted (translated pages are kept)"
+msgstr "Supprimer les réglages, les liens entre langues et la mémoire de traduction à la suppression de l’extension (les pages traduites sont conservées)"
+
+#. translators: %s: locale.
+#: includes/Admin/SettingsPage.php:463
+#, php-format
+msgid "WordPress translations for %s could not be downloaded: themes and plugins will show their texts in English in that language until you install them (Dashboard > Updates)."
+msgstr "Les traductions WordPress pour %s n’ont pas pu être téléchargées : thèmes et extensions afficheront leurs textes en anglais dans cette langue tant qu’elles ne sont pas installées (Tableau de bord > Mises à jour)."
+
+#: includes/Admin/SettingsPage.php:483
+#: includes/Admin/SettingsPage.php:556
+msgid "Add at least one language first."
+msgstr "Ajoutez d’abord au moins une langue."
+
+#: includes/Admin/SettingsPage.php:487
+msgid "Translates every original that has no translation yet. The work runs in the background: you can leave this page, it continues every minute (WP-Cron) until it is done."
+msgstr "Traduit chaque original qui n’a pas encore de traduction. Le travail tourne en arrière-plan : vous pouvez quitter cette page, il continue chaque minute (WP-Cron) jusqu’à la fin."
+
+#: includes/Admin/SettingsPage.php:507
+msgid "Into"
+msgstr "Vers"
+
+#: includes/Admin/SettingsPage.php:520
+msgid "Site title, tagline and menus"
+msgstr "Titre du site, slogan et menus"
+
+#: includes/Admin/SettingsPage.php:521
+msgid "Also update translations whose original changed"
+msgstr "Mettre aussi à jour les traductions dont l’original a changé"
+
+#: includes/Admin/SettingsPage.php:523
+msgid "Estimate the cost"
+msgstr "Estimer le coût"
+
+#: includes/Admin/SettingsPage.php:523
+msgid "Start the translation"
+msgstr "Lancer la traduction"
+
+#: includes/Admin/SettingsPage.php:523
+msgid "Pause"
+msgstr "Pause"
+
+#: includes/Admin/SettingsPage.php:528
+msgid "Queue"
+msgstr "File d’attente"
+
+#. translators: 1: waiting jobs, 2: failed jobs.
+#: includes/Admin/SettingsPage.php:530
+#, php-format
+msgid "%1$d waiting, %2$d failed."
+msgstr "%1$d en attente, %2$d en échec."
+
+#: includes/Admin/SettingsPage.php:531
+msgid "Retry failed translations"
+msgstr "Relancer les traductions en échec"
+
+#: includes/Admin/SettingsPage.php:531
+msgid "Empty the queue"
+msgstr "Vider la file d’attente"
+
+#: includes/Admin/SettingsPage.php:534
+msgid "Reason"
+msgstr "Raison"
+
+#: includes/Admin/SettingsPage.php:536
+msgid "Site strings"
+msgstr "Chaînes du site"
+
+#: includes/Admin/SettingsPage.php:559
+msgid "Site title, tagline and custom menu labels. Translated texts of pages are edited directly in the translated pages."
+msgstr "Titre du site, slogan et libellés de menu personnalisés. Les textes traduits des pages se modifient directement dans les pages traduites."
+
+#: includes/Admin/SettingsPage.php:560
+msgid "Translate missing strings with AI"
+msgstr "Traduire les chaînes manquantes avec l’IA"
+
+#: includes/Admin/SettingsPage.php:591
+msgid "Save the strings"
+msgstr "Enregistrer les chaînes"
+
+#. translators: %s: language name.
+#: includes/Admin/TermFields.php:61
+#, php-format
+msgid "Translate into %s"
+msgstr "Traduire en %s"
+
+#: includes/Frontend/Strings.php:69
+msgid "Site identity"
+msgstr "Identité du site"
+
+#: includes/Plugin.php:99
+msgid "Every minute (GustinAI Multilingual queue)"
+msgstr "Chaque minute (file d’attente GustinAI Multilingual)"
+
+#: includes/Rest/Rest.php:33
+msgid "Language code of the content."
+msgstr "Code de langue du contenu."
+
+#: includes/Rest/Rest.php:54
+msgid "Translations of the content: language code => post ID."
+msgstr "Traductions du contenu : code de langue => ID de la publication."
+
+#. translators: %d: number of texts.
+#: includes/Translation/Engine.php:161
+#, php-format
+msgid "%d text left"
+msgid_plural "%d texts left"
+msgstr[0] "%d texte restant"
+msgstr[1] "%d textes restants"
+
+#. translators: %d: number of texts.
+#: includes/Translation/Engine.php:177
+#, php-format
+msgid "%d text kept in the original language"
+msgid_plural "%d texts kept in the original language"
+msgstr[0] "%d texte conservé dans la langue d’origine"
+msgstr[1] "%d textes conservés dans la langue d’origine"
+
+#: includes/Translation/Engine.php:231
+msgid "The original content is not available."
+msgstr "Le contenu original n’est pas disponible."
+
+#: includes/Translation/Engine.php:234
+msgid "This language is not active."
+msgstr "Cette langue n’est pas active."
+
+#: includes/Translation/Engine.php:242
+msgid "The content is already in this language."
+msgstr "Le contenu est déjà dans cette langue."
+
+#: includes/Translation/Engine.php:247
+msgid "Translation edited by hand: kept as is."
+msgstr "Traduction retouchée à la main : conservée telle quelle."
+
+#: includes/Translation/Engine.php:654
+msgid "The original term is not available."
+msgstr "Le terme original n’est pas disponible."
+
+#: includes/Translation/Engine.php:662
+msgid "The term is already in this language."
+msgstr "Le terme est déjà dans cette langue."
+
+#: includes/Translation/Engine.php:699
+msgid "The translated term is not available."
+msgstr "Le terme traduit n’est pas disponible."
+
+#: includes/Translation/Engine.php:722
+msgid "The translated term could not be created."
+msgstr "Le terme traduit n’a pas pu être créé."
+
+#: includes/Translation/Models.php:35
+msgid "Recommended: the most natural translations, for a few dollars per language for a typical site."
+msgstr "Recommandé : les traductions les plus naturelles, pour quelques dollars par langue sur un site classique."
+
+#: includes/Translation/Models.php:41
+msgid "Half the price of Opus, very good quality."
+msgstr "Moitié prix d’Opus, très bonne qualité."
+
+#: includes/Translation/Models.php:47
+#: includes/Translation/Models.php:79
+msgid "Cheapest, for large volumes (catalogues, archives)."
+msgstr "Le moins cher, pour les gros volumes (catalogues, archives)."
+
+#: includes/Translation/Models.php:53
+msgid "Most capable model, rarely needed for translation."
+msgstr "Modèle le plus puissant, rarement utile pour la traduction."
+
+#: includes/Translation/Models.php:61
+msgid "Recommended: near-flagship quality at a moderate price."
+msgstr "Recommandé : qualité proche du haut de gamme pour un prix modéré."
+
+#: includes/Translation/Models.php:67
+msgid "OpenAI flagship, expensive for translation."
+msgstr "Haut de gamme d’OpenAI, cher pour de la traduction."
+
+#: includes/Translation/Models.php:73
+msgid "Fast and economical, natural writing."
+msgstr "Rapide et économique, écriture naturelle."
+
+#: includes/Translation/Providers/Anthropic.php:103
+#: includes/Translation/Providers/OpenAI.php:96
+msgid "unexpected response"
+msgstr "réponse inattendue"
+
+#: includes/Translation/Providers/Anthropic.php:108
+#: includes/Translation/Providers/OpenAI.php:100
+msgid "The answer was cut off (too long)."
+msgstr "La réponse a été coupée (trop longue)."
+
+#: includes/Translation/Providers/Anthropic.php:111
+#: includes/Translation/Providers/OpenAI.php:112
+msgid "The model declined to translate this content."
+msgstr "Le modèle a refusé de traduire ce contenu."
+
+#: includes/Translation/Providers/Anthropic.php:128
+msgid "Claude did not answer, retry later."
+msgstr "Claude n’a pas répondu, réessayez plus tard."
+
+#: includes/Translation/Providers/OpenAI.php:128
+msgid "OpenAI did not answer, retry later."
+msgstr "OpenAI n’a pas répondu, réessayez plus tard."
+
+#. translators: 1: provider name, 2: HTTP status, 3: error message from the provider.
+#: includes/Translation/Providers/Provider.php:134
+#, php-format
+msgid "%1$s error %2$d: %3$s"
+msgstr "Erreur %1$s %2$d : %3$s"
+
+#: includes/Translation/Translator.php:85
+msgid "Add an API key (Claude or OpenAI) in Multilingual > Settings > AI translation."
+msgstr "Ajoutez une clé API (Claude ou OpenAI) dans Multilingue > Réglages > Traduction IA."
+
+#: includes/Translation/Translator.php:150
+msgid "The model answer could not be read."
+msgstr "La réponse du modèle est illisible."
+
+#: assets/js/switcher-block.js:54
+msgid "Language name"
+msgstr "Nom de la langue"
+
+#: assets/js/switcher-block.js:55
+msgid "Language code"
+msgstr "Code de la langue"
+
+#: assets/js/switcher-block.js:61
+msgid "Hide the current language"
+msgstr "Masquer la langue actuelle"
+
+#: assets/js/switcher-block.js:66
+msgid "Hide languages without translation"
+
+msgstr "Masquer les langues sans traduction"
